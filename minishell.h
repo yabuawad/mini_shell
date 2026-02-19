@@ -45,4 +45,14 @@ typedef struct s_cmd
     struct s_cmd	*next;
 } 	t_cmd;
 
+typedef struct s_token
+{
+    char *tok;
+    struct s_token *next;
+}t_token;
+
+char	**seperate(char const *s, char c);
+void print_split(char **arr);
+void error(char *error_message);
+int check_quotes(char *str);
 #endif
