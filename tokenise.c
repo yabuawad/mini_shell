@@ -29,7 +29,9 @@ void fill_argv(char *line,int size,t_cmd *cmd)
 void tokenise(char *line)
 {
     char  **split;
-    split = seperate(line,' ');
+    if(check_quotes(line) < 0)
+        return;
+    split = sep(line,' ');
 	print_split(split);
 }
 //ls -l | grep h > out
