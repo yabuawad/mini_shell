@@ -33,24 +33,3 @@ if external:
         wait()
 what is a TTY?
 a communication channel between keyboard,screen and processes /dev/tty
-
-:::::
-Parent Process Flow
-|
-fork() -----> child process
-                    |
-                    execve to command
-                    |
-wait()   <-------   exit(status)
-|
-continue
-
-my approach for execution : 
-checking if the command sent is valid , and i found its path
-then checking redirections , if the struct of the redirection is null , then ill do a simple execution for a simple command function 
-
-applying redirection until there is somehting error like open() error, 
-or file not found
-i already did the find_command_path function, the next step is the actual execution
-
-
