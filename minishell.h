@@ -51,8 +51,9 @@ typedef struct s_token
     struct s_token *next;
 }t_token;
 
-char	**sep(char const *s, char c);
+char	**sep(char const *s, char c,char quote);
 void print_split(char **arr);
 void error(char *error_message);
-int check_quotes(char *str);
+int check_quotes(char *str,char c);
+char	**freeptr(char **ptr, int j);
 #endif

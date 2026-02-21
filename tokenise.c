@@ -18,36 +18,106 @@
 //     new_tok->next = NULL;
 // }
 
-void fill_argv(char *line,int size,t_cmd *cmd)
+// void fill_argv(char *line,int size,t_cmd *cmd)
+// {
+//     while(size > 0)
+//     {
+//         cmd->argv[0][size] = line[size];
+//         size--;
+//     }
+// }   
+
+// char **seperate_pipes(char **tokenised,int i,int j)
+// {
+//     char **fullytokenised = malloc(sizeof(char *) * ft_strlen(*tokenised) + 2);
+//     int x;
+//     int y;
+
+//     x = 0;
+//     y = 0;
+//     if(j == 0)
+//     {
+//     }
+// }
+
+char  **check_pipes(char **tokenised)
 {
-    while(size > 0)
+    if(!tokenised)
+        return NULL;
+    char **fullytokenised = malloc(sizeof(char *) * (ft_strlen(*tokenised) + 2));
+    if(!fullytokenised)
+        return NULL;
+    int i;
+    int j;
+    int y;
+    int x;
+    x = 0;
+    
+    y = 0;
+    i = 0;
+    j = 0;
+    while(tokenised[i])
     {
-        cmd->argv[0][size] = line[size];
-        size--;
+        j = 0;
+        fullytokenised[x] = malloc(ft_strlen(tokenised[i]) + 1);
+        if(!fullytokenised[x])
+            return NULL;
+        while(tokenised[i][j])
+        {
+            if(tokenised[i][j] == '|' && ft_strlen(tokenised[i]) != 1)
+            {
+                printf("here");
+                if(j == 0)
+                {
+                    fullytokenised[x++][0] = '|';
+                    x++;
+                }
+                // if(j > 0)
+                // {
+                //     fullytokenised[x][y] = '|';
+            }
+            else
+                fullytokenised[x++][y++] = tokenised[i][j];
+            j++;
+        }
+        i++;
     }
+    return fullytokenised;
 }
+
 void tokenise(char *line)
 {
-    char  **split;
-    if(check_quotes(line) < 0)
+    char  **tokenised;
+    // dq = 1;    
+    if(check_quotes(line,'"') < 0 || check_quotes(line,'\'') < 0)
+    {
+        fprintf(stderr,"unclosed quotes!!!\n");
         return;
-    split = sep(line,' ');
-	print_split(split);
+    }
+    if(check_quotes(line,'"') > 0)
+        tokenised = sep(line,' ','"');
+    else
+        tokenised = sep(line,' ','\'');
+    print_split(check_pipes(tokenised));
+
+    // print_split(tokenised);
 }
-//ls -l | grep h > out
+
 int main()
 {
     while(1)
     {
-    char *line = readline("minishell$ ");//we use readline instead of argvs to make the shell interactive,readline works while the program is running
-    if(!line)
-        return 1;
-    else
-        add_history(line);
-    tokenise(line);
-    // parse();
-    free(line);
+        char *line = readline("minishell$ ");//we use readline instead of argvs to make the shell interactive,readline works while the program is running
+        if(!line)
+            return 1;
+        else
+            add_history(line);
+        tokenise(line);
+        // parse();
+        free(line);
     }
     rl_clear_history(); //clears history ,still not sure if this is the right placement
 }
-// gcc -Wall -Wextra -Werror tokenise.c -L./libft -lft -lreadline
+// cc -Wall -Wextra -Werror tokenise.c -L./libft -lft -lreadline
+//perror only used when a system call or alibrary function fails
+//

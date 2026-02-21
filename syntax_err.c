@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int check_quotes(char *str)
+int check_quotes(char *str,char c)
 {
     int i;
     int q;
@@ -9,7 +9,7 @@ int check_quotes(char *str)
     i = 0;
     while(str[i])
     {
-        if(str[i] == '"')
+        if(str[i] == c)
             q++;
         i++;
     }

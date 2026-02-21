@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-static int	countwd(char const *s, char c)
+static int	countwd(char const *s, char c,char quote)
 {
 	int	counter;
 	int	isword;
@@ -13,7 +13,7 @@ static int	countwd(char const *s, char c)
     qt = 0;
 	while (s[i])
 	{
-        if(s[i] == '"' )
+        if(s[i] == quote)
         {
             qt = !qt;
             i++;
@@ -31,7 +31,7 @@ static int	countwd(char const *s, char c)
 	return (counter);
 }
 
-static int	token_len(char const *s, char c)
+static int	token_len(char const *s, char c,char quote)
 {
 	int	i;
     int qt;
@@ -40,7 +40,7 @@ static int	token_len(char const *s, char c)
 	i = 0;
 	while (s[i])
     {
-        if(s[i] == '"')
+        if(s[i] == quote)
             qt = !qt;
         if(s[i] == c && !qt)
             break;     
@@ -49,7 +49,7 @@ static int	token_len(char const *s, char c)
 	return (i);
 }
 
-static char	*extract_word(char const *s, char c)
+static char	*extract_word(char const *s, char c,char quote)
 {
 	char	*neword;
 	int		i;
@@ -57,12 +57,12 @@ static char	*extract_word(char const *s, char c)
 
     j = 0;
 	i = 0;
-	neword = (char *)malloc(token_len(s, c) + 1);
+	neword = (char *)malloc(token_len(s, c,quote) + 1);
 	if (!neword)
         return (NULL);
-    while (i < token_len(s,c))
+    while (i < token_len(s,c,quote))
 	{
-        if(s[i] == '"')
+        if(s[i] == quote)
         {
             i++;
             continue;
@@ -73,26 +73,15 @@ static char	*extract_word(char const *s, char c)
 	return (neword);
 }
 
-// static char	**freeptr(char **ptr, int j)
-// {
-//     int	i;
-    
-// 	i = 0;
-// 	while (i < j)
-// 	{
-//         free(ptr[i]);
-// 		i++;
-// 	}
-// 	free(ptr);
-// 	return (NULL);
-// }
 
-char	**sep(char const *s, char c)
+char	**sep(char const *s, char c,char quote)
 {
+    // if(!s)
+    //     return NULL;
     char **arr;
     int i = 0;
 
-    arr = malloc(sizeof(char *) * (countwd(s, c) + 1));
+    arr = malloc(sizeof(char *) * (countwd(s, c,quote) + 1));
     if (!arr)
         return NULL;
 
@@ -102,17 +91,23 @@ char	**sep(char const *s, char c)
             s++;
         if (!*s)
             break;
-        arr[i++] = extract_word(s, c);
-        s += token_len(s, c);
+        arr[i++] = extract_word(s, c,quote);
+        // if(!arr[i])
+        //     return NULL;
+        s += token_len(s, c,quote);
     }
     arr[i] = NULL;
     return arr;
 }
 
 
-void print_split(char **arr) {
-    int i = 0;
-
+void print_split(char **arr) 
+{
+    if(!arr)
+        return ;
+    int i;
+    
+    i = 0;
     if (arr == NULL) {
         printf("NULL\n");
         return ;
@@ -125,11 +120,18 @@ void print_split(char **arr) {
     printf("----\n");
 }
 
-// int main(void) {
-//     char **result;
+// char	**freeptr(char **ptr)
+// {
+//     int	i;
+//     int j;
 
-//     result = ft_split("hello!",' ');
-// 	print_split(result);
-
-//     return (0);
+//     j = 0;
+// 	i = 0;
+// 	while (i )
+// 	{
+//         free(ptr[i]);
+// 		i++;
+// 	}
+// 	free(ptr);
+// 	return (NULL);
 // }
