@@ -1,106 +1,86 @@
 #include "minishell.h"
 
-// void new_tok(char *tok,int size)
-// {
-//     if(!tok[0])
-//         return ;
-//     t_token *new_tok = malloc(sizeof(t_token));
-//     if(!new_tok)
-//         return ;
-//     new_tok->value = malloc(size + 1);
-//     if(!new_tok->value)
-//     {
-//         free(new_tok);
-//         return ;
-//     }
-//     ft_memcpy(new_tok->value,tok,size);
-//     new_tok->value[size] = '\0';
-//     new_tok->next = NULL;
-// }
-
-// void fill_argv(char *line,int size,t_cmd *cmd)
-// {
-//     while(size > 0)
-//     {
-//         cmd->argv[0][size] = line[size];
-//         size--;
-//     }
-// }   
-
-// char **seperate_pipes(char **tokenised,int i,int j)
-// {
-//     char **fullytokenised = malloc(sizeof(char *) * ft_strlen(*tokenised) + 2);
-//     int x;
-//     int y;
-
-//     x = 0;
-//     y = 0;
-//     if(j == 0)
-//     {
-//     }
-// }
-
-char  **check_pipes(char **tokenised)
+int count_tok(char **tokenised) // count the size of tokens after seperating the pipe,so we can malloc the right size
 {
-    if(!tokenised)
-        return NULL;
-    char **fullytokenised = malloc(sizeof(char *) * (ft_strlen(*tokenised) + 2));
-    if(!fullytokenised)
-        return NULL;
     int i;
     int j;
-    int y;
-    int x;
-    x = 0;
-    
-    y = 0;
+    int counter;
+
     i = 0;
-    j = 0;
+    counter =0;
     while(tokenised[i])
     {
         j = 0;
-        fullytokenised[x] = malloc(ft_strlen(tokenised[i]) + 1);
-        if(!fullytokenised[x])
-            return NULL;
         while(tokenised[i][j])
         {
-            if(tokenised[i][j] == '|' && ft_strlen(tokenised[i]) != 1)
-            {
-                printf("here");
-                if(j == 0)
-                {
-                    fullytokenised[x++][0] = '|';
-                    x++;
-                }
-                // if(j > 0)
-                // {
-                //     fullytokenised[x][y] = '|';
-            }
-            else
-                fullytokenised[x++][y++] = tokenised[i][j];
+            if(tokenised[i][j] == '|')
+                counter++;
             j++;
         }
+        counter++;
         i++;
     }
-    return fullytokenised;
+    return(counter);
 }
+// char pipe
+char **check_pipes(char **tokenised) // this function is for post seperation pipe check
+{       //for example the command echo "hello"|grep h works even tho there are no spaces so this function is to seperate pipes from cmds 
+    int i;
+    int x;
+    int j;
+    int found;
+    char **pipedtok;
+
+    pipedtok = malloc(sizeof(char *) * (count_tok(tokenised) + 1));
+    if (!pipedtok)
+        return NULL;
+
+    i = 0;
+    x = 0;
+    while (tokenised[i])
+    {
+        j = 0;
+        found = 0;
+
+        while (tokenised[i][j])
+        {
+            if (tokenised[i][j] == '|' && ft_strlen(tokenised[i]) > 1)
+            {
+                if (j > 0)
+                    pipedtok[x++] = ft_substr(tokenised[i], 0, j);
+                pipedtok[x++] = ft_strdup("|");
+                if (tokenised[i][j + 1])
+                    pipedtok[x++] = ft_strdup(tokenised[i] + j + 1);
+                found = 1;
+                break;
+            }
+            j++;
+        }
+        if (!found)
+            pipedtok[x++] = ft_strdup(tokenised[i]);
+        i++;
+    }
+    pipedtok[x] = NULL;
+    return (pipedtok);
+}
+
 
 void tokenise(char *line)
 {
     char  **tokenised;
     // dq = 1;    
-    if(check_quotes(line,'"') < 0 || check_quotes(line,'\'') < 0)
+    if(check_quotes(line,'"') < 0 || check_quotes(line,'\'') < 0) //check on unclosed quotes
     {
         fprintf(stderr,"unclosed quotes!!!\n");
         return;
     }
-    if(check_quotes(line,'"') > 0)
+    if(check_quotes(line,'"') > 0)  //if quotes are double you pass the double
         tokenised = sep(line,' ','"');
     else
-        tokenised = sep(line,' ','\'');
+        tokenised = sep(line,' ','\''); // any other case? we pass the single
     print_split(check_pipes(tokenised));
-
     // print_split(tokenised);
+    // makelist(tokenised);
 }
 
 int main()

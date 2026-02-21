@@ -19,9 +19,3 @@ int check_quotes(char *str,char c)
     else 
         return q;
 }
-
-void error(char *error_message)
-{
-    perror(error_message);
-    exit(1);
-}
