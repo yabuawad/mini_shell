@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:18 by mohamed           #+#    #+#             */
-/*   Updated: 2026/02/19 22:15:30 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/21 03:05:45 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ typedef struct s_env
 
 char	*find_command_path(char *path, char *cmd);
 char	*find_full_path(char *envp[]);
-int execute_command(t_cmd *cmd,char **envp);
+int execute_command(t_cmd *cmd,t_env *env);
 int execute_builtin(t_cmd *cmd, t_env *env);
 int execute_cd(t_cmd *cmd);
 int is_builtin(const char *s);
@@ -66,4 +66,14 @@ void    free_2d(char **array);
 int execute_exit(t_cmd *cmd,t_env *env);
 int check_redirection(t_cmd *cmd,t_env *env);
 void print_exit(char *message, int exit_value);
+int ft_2dstrlen(char **str);
+char **ft_envdup(char **envp);
+int envp_search(char **envp, char *name);
+char    *find_envp_value(char **envp, char *name);
+char    *variable_name(char **envp, int index);
+char    *add_varible(char *str);
+int execute_export(t_cmd *cmd, t_env *env);
+int execute_unset(t_cmd *cmd, t_env *env);
+t_cmd *parse_input(char *input);
+void free_commands(t_cmd *cmd);
 #endif
