@@ -4,29 +4,29 @@ static int	countwd(char const *s, char c,char quote)
 {
 	int	counter;
 	int	isword;
-	int	i;
+	// int	i;
     int qt;
 
-	i = 0;
+	// i = 0;
 	counter = 0;
 	isword = 0;
     qt = 0;
-	while (s[i])
+	while (*s)
 	{
-        if(s[i] == quote)
+        if(*s == quote)
         {
             qt = !qt;
-            i++;
+            s++;
             continue;
         }
-		if (s[i] != c && !isword ) 
+		if (*s != c && !isword ) 
 		{                                 
 			isword = 1;
 			counter++;
 		}
-		else if (s[i] == c && !qt)
+		else if (*s == c && !qt)
 		    isword = 0;
-		i++;
+		s++;
 	}
 	return (counter);
 }
@@ -76,11 +76,10 @@ static char	*extract_word(char const *s, char c,char quote)
 
 char	**sep(char const *s, char c,char quote)
 {
-    // if(!s)
-    //     return NULL;
     char **arr;
-    int i = 0;
-
+    int i;
+    
+    i = 0;
     arr = malloc(sizeof(char *) * (countwd(s, c,quote) + 1));
     if (!arr)
         return NULL;
@@ -92,8 +91,6 @@ char	**sep(char const *s, char c,char quote)
         if (!*s)
             break;
         arr[i++] = extract_word(s, c,quote);
-        // if(!arr[i])
-        //     return NULL;
         s += token_len(s, c,quote);
     }
     arr[i] = NULL;
@@ -120,18 +117,3 @@ void print_split(char **arr)
     printf("----\n");
 }
 
-// char	**freeptr(char **ptr)
-// {
-//     int	i;
-//     int j;
-
-//     j = 0;
-// 	i = 0;
-// 	while (i )
-// 	{
-//         free(ptr[i]);
-// 		i++;
-// 	}
-// 	free(ptr);
-// 	return (NULL);
-// }
