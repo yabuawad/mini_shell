@@ -2,6 +2,7 @@
 
 int main()
 {
+    // t_token *tokens;
     while(1)
     {
         char *line = readline("minishell$ ");//we use readline instead of argvs to make the shell interactive,readline works while the program is running

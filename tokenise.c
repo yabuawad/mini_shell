@@ -28,7 +28,7 @@ int count_tok(char **tokenised) // count the size of tokens after seperating the
         j = 0;
         while(tokenised[i][j])
         {
-            if(tokenised[i][j] == '|')
+            if(tokenised[i][j] == '|' && ft_strlen(tokenised[i]) > 1)
                 counter += 2;
             j++;
         }
@@ -37,29 +37,32 @@ int count_tok(char **tokenised) // count the size of tokens after seperating the
     }
     return(counter);
 }
+
 // char pipe
-char **check_pipes(char **tokenised) // this function is for post seperation pipe check
+char **check_pipes(char **tokenised,int i,int x) // this function is for post seperation pipe check
 {       //for example the command echo "hello"|grep h works even tho there are no spaces so this function is to seperate pipes from cmds 
-    int i;
-    int x;
     int j;
     int found;
     char **pipedtok;
+    int qtfound;
 
     pipedtok = malloc(sizeof(char *) * (count_tok(tokenised) + 1));
     if (!pipedtok)
         return NULL;
 
-    i = 0;
-    x = 0;
+    qtfound = 0;
     while (tokenised[i])
     {
         j = 0;
         found = 0;
-
         while (tokenised[i][j])
         {
-            if (tokenised[i][j] == '|' && ft_strlen(tokenised[i]) > 1)
+            if(check_quotes(tokenised[i],'"') > 0 || check_quotes(tokenised[i],'\'') > 0)
+            {
+                qtfound = 1;
+                j++;
+            }
+            else if (tokenised[i][j] == '|' && ft_strlen(tokenised[i]) > 1)
             {
                 if (j > 0)
                     pipedtok[x++] = ft_substr(tokenised[i], 0, j);
@@ -71,13 +74,18 @@ char **check_pipes(char **tokenised) // this function is for post seperation pip
             }
             j++;
         }
-        if (!found)
+        if(qtfound)
+            pipedtok[x++] = ft_strdup(removeqt(tokenised[i]));
+        else if(!found)
             pipedtok[x++] = ft_strdup(tokenised[i]);
         i++;
     }
+    // if(pipedtok[x -1] == '"')
+        // x--;
     pipedtok[x] = NULL;
     return (pipedtok);
 }
+
 
 void tokenise(char *line)
 {
@@ -92,7 +100,7 @@ void tokenise(char *line)
         tokenised = sep(line,' ','"');
     else
         tokenised = sep(line,' ','\''); // any other case? we pass the single
-    extratok = check_pipes(tokenised);
+    extratok = check_pipes(tokenised,0,0);
     freearr(tokenised);
     print_split(extratok);
     // makelist(check_pipes(tokenised));

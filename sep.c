@@ -62,11 +62,11 @@ static char	*extract_word(char const *s, char c,char quote)
         return (NULL);
     while (i < token_len(s,c,quote))
 	{
-        if(s[i] == quote)
-        {
-            i++;
-            continue;
-        }
+        // if(s[i] == quote)
+        // {
+        //     i++;
+        //     continue;
+        // }
         neword[j++] = s[i++];
 	}
 	neword[j] = '\0';

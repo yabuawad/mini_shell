@@ -45,15 +45,18 @@ typedef struct s_cmd
     struct s_cmd	*next;
 } 	t_cmd;
 
-// typedef struct s_token
-// {
-//     char *tok;
-//     struct s_token *next;
-// }t_token;
+typedef struct s_token
+{
+    char *value;
+    int     dqt;
+    int     sqt;
+    struct s_token *next;
+}t_token;
 
 char	**sep(char const *s, char c,char quote);
 void print_split(char **arr);
 int check_quotes(char *str,char c);
 char	**freearr(char **ptr);
 void tokenise(char *line);
+char *removeqt(char *str);
 #endif
