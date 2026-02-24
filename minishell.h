@@ -45,13 +45,13 @@ typedef struct s_cmd
     struct s_cmd	*next;
 } 	t_cmd;
 
-typedef struct s_token
-{
-    char *value;
-    int     dqt;
-    int     sqt;
-    struct s_token *next;
-}t_token;
+// typedef struct s_token
+// {
+//     char *value;
+//     int     dqt;
+//     int     sqt;
+//     struct s_token *next;
+// }t_token;
 
 char	**sep(char const *s, char c,char quote);
 void print_split(char **arr);

@@ -1,20 +1,20 @@
 #include "minishell.h"
 
-char	**freearr(char **ptr)
-{
-	int	i;
-	// int j;
+// char	**freearr(char **ptr)
+// {
+// 	int	i;
+// 	// int j;
 
-	// j = 0;
-	i = 0;
-	while (ptr[i])
-	{
-		free(ptr[i]);
-		i++;
-	}
-	free(ptr);
-	return (NULL);
-}
+// 	// j = 0;
+// 	i = 0;
+// 	while (ptr[i])
+// 	{
+// 		free(ptr[i]);
+// 		i++;
+// 	}
+// 	free(ptr);
+// 	return (NULL);
+// }
 int count_tok(char **tokenised) // count the size of tokens after seperating the pipe,so we can malloc the right size
 {
     int i;
@@ -39,30 +39,80 @@ int count_tok(char **tokenised) // count the size of tokens after seperating the
 }
 
 // char pipe
-char **check_pipes(char **tokenised,int i,int x) // this function is for post seperation pipe check
-{       //for example the command echo "hello"|grep h works even tho there are no spaces so this function is to seperate pipes from cmds 
+// char **check_pipes(char **tokenised,int i,int x) // this function is for post seperation pipe check
+// {       //for example the command echo "hello"|grep h works even tho there are no spaces so this function is to seperate pipes from cmds 
+//     int j;
+//     int found;
+//     char **pipedtok;
+//     int qtfound;
+
+//     pipedtok = malloc(sizeof(char *) * (count_tok(tokenised) + 1));
+//     if (!pipedtok)
+//         return NULL;
+
+//     while (tokenised[i])
+//     {
+//         qtfound = 0;
+//         j = 0;
+//         found = 0;
+//         while (tokenised[i][j])
+//         {
+//             if(check_quotes(tokenised[i],'"') > 0 || check_quotes(tokenised[i],'\'') > 0)
+//             {
+//                 qtfound = 1;
+//                 j++;
+//             }
+//             else if (tokenised[i][j] == '|' && ft_strlen(tokenised[i]) > 1)
+//             {
+//                 if (j > 0)
+//                     pipedtok[x++] = ft_substr(tokenised[i], 0, j);
+//                 pipedtok[x++] = ft_strdup("|");
+//                 if (tokenised[i][j + 1])
+//                     pipedtok[x++] = ft_strdup(tokenised[i] + j + 1);
+//                 found = 1;
+//                 break;
+//             }
+//             j++;
+//         }
+//         if(qtfound)
+//             pipedtok[x++] = ft_strdup(removeqt(tokenised[i]));
+//         else if(!found)
+//             pipedtok[x++] = ft_strdup(tokenised[i]);
+//         i++;
+//     }
+//     // if(pipedtok[x -1] == '"')
+//         // x--;
+//     pipedtok[x] = NULL;
+//     return (pipedtok);
+// }
+
+char **check_pipes(char **tokenised, int i, int x)
+{
     int j;
     int found;
     char **pipedtok;
-    int qtfound;
+    int in_squote;
+    int in_dquote;
 
     pipedtok = malloc(sizeof(char *) * (count_tok(tokenised) + 1));
     if (!pipedtok)
         return NULL;
 
-    qtfound = 0;
     while (tokenised[i])
     {
         j = 0;
         found = 0;
+        in_squote = 0;
+        in_dquote = 0;
+
         while (tokenised[i][j])
         {
-            if(check_quotes(tokenised[i],'"') > 0 || check_quotes(tokenised[i],'\'') > 0)
-            {
-                qtfound = 1;
-                j++;
-            }
-            else if (tokenised[i][j] == '|' && ft_strlen(tokenised[i]) > 1)
+            if (tokenised[i][j] == '\'' && !in_dquote)
+                in_squote = !in_squote;
+            else if (tokenised[i][j] == '"' && !in_squote)
+                in_dquote = !in_dquote;
+
+            else if (tokenised[i][j] == '|' && !in_squote && !in_dquote)
             {
                 if (j > 0)
                     pipedtok[x++] = ft_substr(tokenised[i], 0, j);
@@ -74,20 +124,17 @@ char **check_pipes(char **tokenised,int i,int x) // this function is for post se
             }
             j++;
         }
-        if(qtfound)
-            pipedtok[x++] = ft_strdup(removeqt(tokenised[i]));
-        else if(!found)
+
+        if (!found)
             pipedtok[x++] = ft_strdup(tokenised[i]);
+
         i++;
     }
-    // if(pipedtok[x -1] == '"')
-        // x--;
+
     pipedtok[x] = NULL;
     return (pipedtok);
 }
-
-
-void tokenise(char *line)
+void  tokenise(char *line)
 {
     char  **tokenised;
     char **extratok;    
@@ -104,6 +151,7 @@ void tokenise(char *line)
     freearr(tokenised);
     print_split(extratok);
     // makelist(check_pipes(tokenised));
-    freearr(extratok);
+    // freearr(extratok);
+    // return (extratok);
 }
 

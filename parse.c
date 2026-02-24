@@ -1,6 +1,16 @@
 #include "minishell.h"
+// tokens
+//   ↓
+// syntax validation
+//   ↓
+// expansion
+//   ↓
+// quote removal
+//   ↓
+// build command structures (t_cmd, redirs, pipes)
 
-// void makelist(char **tokens)
-// {
-    
-// }
+//tokenise =  OK
+//syntax validation = RN
+// fill struct 
+// expand
+//excute

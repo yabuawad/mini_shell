@@ -5,7 +5,7 @@ char *removeqt(char *str)
     char *quoteless = malloc(ft_strlen(str)* sizeof(char));
     if(!quoteless)
         return NULL;
-    int i;
+    size_t i;
     int j;
 
     j = 0;
@@ -14,7 +14,8 @@ char *removeqt(char *str)
     {
         // if(str[i] == '"' || str[i] == '\'' )
         // {
-        //     i++;
+        //     // if(i != 0 && i < ft_strlen(str))
+        //         i++;
         // }
         // else        
             quoteless[j++] = str[i++];  
@@ -22,33 +23,38 @@ char *removeqt(char *str)
     quoteless[j] = '\0';
     return (quoteless);
 }
+int check_quotes(char *str,char c)
+{
+    int i;
+    int q;
 
-// char	**freearr(char **ptr)
-// {
-//     int	i;
-// 	// int j;
+    q = 0;
+    i = 0;
+    while(str[i])
+    {
+        if(str[i] == c)
+            q++;
+        i++;
+    }
 
-// 	// j = 0;
-// 	i = 0;
-// 	while (ptr[i])
-// 	{
-// 		free(ptr[i]);
-// 		i++;
-// 	}
-// 	free(ptr);
-// 	return (NULL);
-// }
+    if(q % 2 != 0)
+        return -1;
+    else 
+        return q;
+}
 
+char	**freearr(char **ptr)
+{
+    int	i;
+	// int j;
 
-// void append_token(t_token **head,t_token **tail,t_token *newtok)
-// {
-//     if(!*head)
-//     {
-//         *head = newtok;
-//         *tail = newtok;
-//     }
-//     else
-//         (*tail)->next = newtok;
-//         *tail = newtok;
-//     newtok->next = NULL;
-// }
+	// j = 0;
+	i = 0;
+	while (ptr[i])
+	{
+		free(ptr[i]);
+		i++;
+	}
+	free(ptr);
+	return (NULL);
+}
