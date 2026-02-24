@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 18:59:45 by malhassa          #+#    #+#             */
-/*   Updated: 2026/02/24 06:49:47 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/24 07:10:52 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,11 +93,6 @@ static void    apply_redirections(t_redir *redir)
 {
     while (redir)
     {
-        if (!redir -> target)
-        {
-            ft_putendl_fd("minishell:syntax error near unexpected token `newline'",2);
-            exit(0);
-        }
         if (redir->type == R_IN)
             infile_redirection(redir);
         else if (redir->type == R_OUT)
