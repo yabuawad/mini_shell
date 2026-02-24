@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/20 16:15:59 by mohamed           #+#    #+#             */
-/*   Updated: 2026/02/20 17:36:09 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/23 03:49:46 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,19 @@ char    **new_environment(char **envp, char *cmd)
     while(envp[i])
     {
         new_envp[i] = ft_strdup(envp[i]);
+        if (!new_envp[i])
+        {
+            free_2d(new_envp);
+            return (NULL);
+        }
         i++;
     }
     new_envp[i] = ft_strdup(cmd);
+    if (!new_envp[i])
+    {
+        free_2d(new_envp);
+        return (NULL);
+    }
     i++;
     new_envp[i] = NULL;
     free_2d(envp);
@@ -56,9 +66,15 @@ int execute_export(t_cmd *cmd, t_env *env)
         {
             free(env->envp[index]);
             env->envp[index] = ft_strdup(cmd->argv[i]);
+            if (!env->envp[index])
+                return (1);
         }
         else
-            env->envp = new_environment(env->envp, cmd->argv[i]);
+        {
+            env->envp = new_environment(env->envp,cmd->argv[i]);
+            if (!env->envp)
+                return (1);
+        }
         i++;
     }
     return (0);

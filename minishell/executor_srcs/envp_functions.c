@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 21:30:14 by mohamed           #+#    #+#             */
-/*   Updated: 2026/02/20 17:16:32 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/23 03:45:09 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,11 @@ char **ft_envdup(char **envp)
     while(envp[i])
     {
         new_envp[i] = ft_strdup(envp[i]);
+        if (!new_envp[i])
+        {
+            free_2d(new_envp);
+            return (NULL);
+        }
         i++;
     }
     new_envp[i] = NULL;
@@ -37,13 +42,13 @@ char    *variable_name(char **envp, int index)
     char    *str;
     
     i = 0;
-    while(envp[index][i] != '=')
+    while(envp[index][i] && envp[index][i] != '=')
         i++;
     str = malloc(sizeof(char) * (i + 1));
     if (!str)
         return (NULL);
     i = 0;
-    while(envp[index][i] != '=')
+    while(envp[index][i] && envp[index][i] != '=')
     {
         str[i] = envp[index][i];
         i++;

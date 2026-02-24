@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 15:59:52 by malhassa          #+#    #+#             */
-/*   Updated: 2026/02/21 03:51:54 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/23 05:47:44 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,21 +34,23 @@ int execute_builtin(t_cmd *cmd, t_env *env)
 
 int execute_command(t_cmd *cmd,t_env *env)
 {
-    char    *path;
     pid_t pid;
     int status;
-    
-    path = find_command_path(find_full_path(env->envp),cmd->argv[0]);
+    char    *path;
+
+    path = find_command_path(find_full_path(env->envp), cmd->argv[0]);
     if (!path)
     {
-        ft_putstr_fd("Command not found\n",2);
+        ft_putstr_fd("minishell: ", 2);
+        ft_putstr_fd(cmd->argv[0], 2);
+        ft_putstr_fd(": command not found\n", 2);
         return (127);
     }
     pid = fork();
     if (pid == -1)
     {
-        ft_putstr_fd("Fork Error\n",2);
-        return (1);//??
+        perror("minishell: fork");
+        return (1);
     }
     if (pid == 0)
     {

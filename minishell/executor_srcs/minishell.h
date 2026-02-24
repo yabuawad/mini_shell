@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:18 by mohamed           #+#    #+#             */
-/*   Updated: 2026/02/21 03:05:45 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/24 06:47:09 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,4 +76,5 @@ int execute_export(t_cmd *cmd, t_env *env);
 int execute_unset(t_cmd *cmd, t_env *env);
 t_cmd *parse_input(char *input);
 void free_commands(t_cmd *cmd);
+void    perror_exit(char *message,int exit_code);
 #endif

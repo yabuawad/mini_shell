@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: parser <parser@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/20 18:00:00 by parser            #+#    #+#             */
-/*   Updated: 2026/02/20 18:00:00 by parser           ###   ########.fr       */
+/*   Updated: 2026/02/23 03:51:47 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,11 @@ t_token *token_new(char *value, int type)
     if (!token)
         return (NULL);
     token->value = ft_strdup(value);
+    if (!token->value)
+    {
+        free(token);
+        return (NULL);
+    }
     token->type = type;
     token->next = NULL;
     return (token);
@@ -130,12 +135,18 @@ char *extract_word(char *str, int *i)
     {
         if (is_quote(str[*i]))
         {
-            temp = extract_quoted_string(str, i, str[*i - 1]);
+            char quote = str[*i];
+            temp = extract_quoted_string(str, i, quote);
             if (temp)
             {
                 char *joined = ft_strjoin(result, temp);
-                free(result);
                 free(temp);
+                if (!joined)
+                {
+                    free(result);
+                    return (NULL);
+                }
+                free(result);
                 result = joined;
             }
         }
@@ -150,8 +161,13 @@ char *extract_word(char *str, int *i)
             if (word_part)
             {
                 temp = ft_strjoin(result, word_part);
-                free(result);
                 free(word_part);
+                if (!temp)
+                {
+                    free(result);
+                    return (NULL);
+                }
+                free(result);
                 result = temp;
             }
         }
@@ -180,8 +196,16 @@ t_token *tokenize(char *input)
         // Check for redirections
         if (input[i] == '<')
         {
-            token_add_back(&tokens, token_new("<", 1));
-            i++;
+            if (input[i + 1] == '<')
+            {
+                token_add_back(&tokens, token_new("<<", 6));
+                i += 2;
+            }
+            else
+            {
+                token_add_back(&tokens, token_new("<", 1));
+                i++;
+            }
         }
         else if (input[i] == '>')
         {
@@ -233,12 +257,19 @@ t_redir *redir_new(char *target, int type)
         return (NULL);
     redir->fd = -1;
     redir->target = ft_strdup(target);
+    if (!redir->target)
+    {
+        free(redir);
+        return (NULL);
+    }
     if (type == 1)
         redir->type = R_IN;
     else if (type == 2)
         redir->type = R_OUT;
     else if (type == 3)
         redir->type = R_APPEND;
+    else if (type == 6)
+        redir->type = R_HEREDOC;
     redir->next_redirection = NULL;
     return (redir);
 }
@@ -306,6 +337,20 @@ int count_argv(t_token *tokens)
     }
     return (count);
 }
+void free_argv(char **argv)
+{
+    int i;
+    
+    if (!argv)
+        return;
+    i = 0;
+    while (argv[i])
+    {
+        free(argv[i]);
+        i++;
+    }
+    free(argv);
+}
 
 char **build_argv(t_token *tokens)
 {
@@ -325,6 +370,11 @@ char **build_argv(t_token *tokens)
     while (tokens && tokens->type == 0)
     {
         argv[i] = ft_strdup(tokens->value);
+        if (!argv[i])
+        {
+            free_argv(argv);
+            return (NULL);
+        }
         i++;
         tokens = tokens->next;
     }
@@ -333,20 +383,7 @@ char **build_argv(t_token *tokens)
     return (argv);
 }
 
-void free_argv(char **argv)
-{
-    int i;
-    
-    if (!argv)
-        return;
-    i = 0;
-    while (argv[i])
-    {
-        free(argv[i]);
-        i++;
-    }
-    free(argv);
-}
+
 
 // ============================================================================
 // MAIN PARSER
@@ -374,9 +411,13 @@ t_cmd *parse_tokens(t_token *tokens)
         // Start new command
         if (current_cmd == NULL || tokens->type == 4 || tokens->type == 5)
         {
-            if (current_cmd && current_cmd->argv)
+            if (current_cmd && (current_cmd->argv || current_cmd->redirs))
             {
                 cmd_add_back(&commands, current_cmd);
+            }
+            else if (current_cmd)
+            {
+                free(current_cmd);
             }
             current_cmd = cmd_new();
             if (!current_cmd)
@@ -390,7 +431,7 @@ t_cmd *parse_tokens(t_token *tokens)
         }
         
         // Handle redirections
-        if (tokens->type == 1 || tokens->type == 2 || tokens->type == 3)
+        if (tokens->type == 1 || tokens->type == 2 || tokens->type == 3 || tokens->type == 6)
         {
             redir_type = tokens->type;
             tokens = tokens->next;
@@ -431,7 +472,7 @@ t_cmd *parse_tokens(t_token *tokens)
     }
     
     // Add last command
-    if (current_cmd && current_cmd->argv)
+    if (current_cmd && (current_cmd->argv || current_cmd->redirs))
         cmd_add_back(&commands, current_cmd);
     else if (current_cmd)
         free(current_cmd);

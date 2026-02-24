@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 19:09:18 by malhassa          #+#    #+#             */
-/*   Updated: 2026/02/20 17:54:05 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/24 05:21:28 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,20 +15,29 @@
 int execute_cd(t_cmd *cmd)
 {
     char *home;
-    // should i replace getenv with the find_env_value?
+    
     if (!cmd->argv[1])
     {
-        home = getenv("HOME");
+        home = getenv("HOME"); // should i replace it with new_env? and should home be freed?
         if (!home)
         {
-            write(2, "cd: HOME not set\n", 17);
+            ft_putstr_fd("minishell: cd: HOME not set\n", 2);
             return (1);
         }
-        return (chdir(home));
+        if (chdir(home) == -1)
+        {
+            ft_putstr_fd("minishell: cd: ", 2);
+            ft_putstr_fd(home, 2);
+            ft_putstr_fd(": No such file or directory\n", 2);
+            return (1);
+        }
+        return (0);
     }
     if (chdir(cmd->argv[1]) == -1)
     {
-        perror("cd");
+        ft_putstr_fd("minishell: cd: ", 2);
+        ft_putstr_fd(cmd->argv[1], 2);
+        ft_putstr_fd(": No such file or directory\n", 2);
         return (1);
     }
     return (0);
@@ -62,7 +71,7 @@ int execute_pwd(void)
 
     if (getcwd(pwd,sizeof(pwd)) == NULL)
     {
-        perror("pwd");
+        perror("minishell: pwd");
         return (1);
     }
     printf("%s\n",pwd);
@@ -74,9 +83,9 @@ int execute_env(t_cmd *cmd , t_env *env)
     
     if (cmd->argv[1])
     {
-        write(2,"env: '",6);
-        write(2,cmd->argv[1],ft_strlen(cmd->argv[1]));
-        write(2, "’: No such file or directory\n", 29);
+        ft_putstr_fd("env: '", 2);
+        ft_putstr_fd(cmd->argv[1], 2);
+        ft_putstr_fd("': No such file or directory\n", 2);
         return (127);
     }
     i = 0;
