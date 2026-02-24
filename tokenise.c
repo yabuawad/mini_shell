@@ -138,91 +138,79 @@ char **check_pipes(char **tokenised, int i, int x)
 // {
 
 // }
-char **check_redir(char **str,int i,int j ,int x)
+char **check_redir(char **str, int i, int j, int x)
 {
-    int found;
-    int in_dqt;
-    int in_sqt;
-    char **tok;
+    int in_sqt, in_dqt, found;
+    char **tok = malloc(sizeof(char *) * (count_tok(str) + 1));
 
-    tok = malloc(sizeof(char *) * (count_tok(str) + 1));
     if (!tok)
-    return NULL;
-    while(str[i])
+        return NULL;
+
+    while (str[i])
     {
         j = 0;
-        found = 0;
-        in_dqt = 0;
         in_sqt = 0;
-        while(str[i][j])
+        in_dqt = 0;
+        found = 0;
+
+        while (str[i][j])
         {
             if (str[i][j] == '\'' && !in_dqt)
                 in_sqt = !in_sqt;
             else if (str[i][j] == '"' && !in_sqt)
                 in_dqt = !in_dqt;
-            if(str[i][j] == '>' && !in_sqt && !in_dqt)
+
+            else if (!in_sqt && !in_dqt && (str[i][j] == '>' || str[i][j] == '<'))
             {
                 found = 1;
                 if (j > 0)
-                    tok[x++] = ft_substr(str[i],0,j);
-                if(str[i][j+1] == '>')
+                    tok[x++] = ft_substr(str[i], 0, j);
+
+                if (str[i][j + 1] == str[i][j])
                 {
-                    tok[x++] = ft_strdup(">>");
-                    if(str[i][j +1])
-                    tok[x++] = ft_strdup(str[i] +j + 2);
-                }
-                else
-                 {   
-                    tok[x++] = ft_strdup(">");
-                    if(str[i][j +1])
-                    tok[x++] = ft_strdup(str[i] + j + 1);
-                }
-            }
-              if(str[i][j] == '<' && !in_sqt && !in_dqt)
-            {
-                found = 1;
-                tok[x++] = ft_substr(str[i],0,j);
-                if(str[i][j+1] == '<')
-                {
-                    tok[x++] = ft_strdup("<<");
-                    if(str[i][j +1])
-                        tok[x++] = ft_strdup(str[i] +j + 2);
+                    tok[x++] = ft_substr(str[i], j, 2);
+                    if (str[i][j + 2])
+                        tok[x++] = ft_strdup(str[i] + j + 2);
                 }
                 else
                 {
-                    if (j > 0)
-                        tok[x++] = ft_strdup("<");
-                    if(str[i][j +1])
+                    tok[x++] = ft_substr(str[i], j, 1);
+                    if (str[i][j + 1])
                         tok[x++] = ft_strdup(str[i] + j + 1);
                 }
+                break;
             }
-        j++;
+            j++;
         }
-        if(!found)
+        if (!found)
             tok[x++] = ft_strdup(str[i]);
         i++;
     }
     tok[x] = NULL;
-    return (tok);
+    return tok;
 }
 void  tokenise(char *line)
 {
-    char  **tokenised;
-    char **extratok;    
+    char  **seperated;
+    char **piped;
+    char **redirected;
+    char **errorless;    
     if(check_quotes(line,'"') < 0 || check_quotes(line,'\'') < 0) //check on unclosed quotes
     {
         fprintf(stderr,"unclosed quotes!!!\n");
         return;
     }
     if(check_quotes(line,'"') > 0)  //if quotes are double you pass the double
-        tokenised = sep(line,' ','"');
+        seperated = sep(line,' ','"');
     else
-        tokenised = sep(line,' ','\''); // any other case? we pass the single
-    extratok = check_pipes(check_redir(tokenised,0,0,0),0,0);
-    freearr(tokenised);
-    print_split(extratok);
-    // makelist(check_pipes(tokenised));
-    // freearr(extratok);
-    // return (extratok);
+        seperated = sep(line,' ','\''); // any other case? we pass the single
+    redirected = check_redir(seperated,0,0,0);
+    freearr(seperated);
+    piped = check_pipes(redirected,0,0);
+    print_split(piped);
+    freearr(redirected);
+    // errorless = handled_errors();
+    freearr(piped);
+
 }
 
