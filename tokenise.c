@@ -194,7 +194,7 @@ void  tokenise(char *line)
     char  **seperated;
     char **piped;
     char **redirected;
-    char **errorless;    
+    // char **errorless;    
     if(check_quotes(line,'"') < 0 || check_quotes(line,'\'') < 0) //check on unclosed quotes
     {
         fprintf(stderr,"unclosed quotes!!!\n");
@@ -205,12 +205,15 @@ void  tokenise(char *line)
     else
         seperated = sep(line,' ','\''); // any other case? we pass the single
     redirected = check_redir(seperated,0,0,0);
-    freearr(seperated);
     piped = check_pipes(redirected,0,0);
-    print_split(piped);
+    if(handled_errors(piped,0))
+        print_split(piped);
+    else
+        printf("error\n");
+    freearr(seperated);
     freearr(redirected);
-    // errorless = handled_errors();
     freearr(piped);
+    // errorless = handled_errors(piped,0);
 
 }
 
