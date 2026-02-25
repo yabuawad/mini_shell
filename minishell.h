@@ -59,5 +59,5 @@ int check_quotes(char *str,char c);
 char	**freearr(char **ptr);
 void tokenise(char *line);
 char *removeqt(char *str);
-int handled_errors(char **tokens,int i);
+int handled_errors(char **tokens,int i,int j,int dqt,int sqt);
 #endif

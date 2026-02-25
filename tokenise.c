@@ -134,10 +134,7 @@ char **check_pipes(char **tokenised, int i, int x)
     pipedtok[x] = NULL;
     return (pipedtok);
 }
-// char **redir(char **str,char red,char **tok)
-// {
 
-// }
 char **check_redir(char **str, int i, int j, int x)
 {
     int in_sqt, in_dqt, found;
@@ -206,7 +203,7 @@ void  tokenise(char *line)
         seperated = sep(line,' ','\''); // any other case? we pass the single
     redirected = check_redir(seperated,0,0,0);
     piped = check_pipes(redirected,0,0);
-    if(handled_errors(piped,0))
+    if(handled_errors(piped,0,0,0,0))
         print_split(piped);
     else
         printf("error\n");
@@ -214,6 +211,5 @@ void  tokenise(char *line)
     freearr(redirected);
     freearr(piped);
     // errorless = handled_errors(piped,0);
-
 }
 
