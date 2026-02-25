@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:18 by mohamed           #+#    #+#             */
-/*   Updated: 2026/02/25 16:35:16 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/25 22:02:08 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include <sys/wait.h>   
 #include <stdlib.h>
 #include <fcntl.h>
+#include <errno.h>
 #include "../libft/libft.h"
 
 typedef enum e_redir_type
@@ -59,17 +60,19 @@ typedef struct s_pipes
     pid_t   *pids;
     int status;
     int fd[2];
-    int i;
     int last_read;
     int cmds_length;
 }t_pipes;
 
 char	*find_command_path(char *path, char *cmd);
+int fork_error(int fd[2],t_pipes *pipes);
+int pipe_error(t_pipes *pipes);
+int path_error(t_cmd *cmd);
 char	*find_full_path(char *envp[]);
 int execute_command(t_cmd *cmd,t_env *env);
 void    apply_redirections(t_redir *redir);
 int execute_builtin(t_cmd *cmd, t_env *env);
-int execute_cd(t_cmd *cmd);
+int execute_cd(t_cmd *cmd, t_env *env);
 int is_builtin(const char *s);
 int execute_env(t_cmd *cmd , t_env *env);
 int execute_pwd(void);

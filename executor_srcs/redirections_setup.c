@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 18:59:45 by malhassa          #+#    #+#             */
-/*   Updated: 2026/02/25 02:31:42 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/25 22:02:04 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,14 @@ static void    infile_redirection(t_redir *redir)
 {
     int infile_fd;
 
-    infile_fd = open(redir->target,O_RDONLY);
+    infile_fd = open(redir->target, O_RDONLY);
     if (infile_fd < 0)
     {
         ft_putstr_fd("minishell: ", 2);
         ft_putstr_fd(redir->target, 2);
-        ft_putstr_fd(": No such file or directory\n", 2);
+        ft_putstr_fd(": ", 2);
+        ft_putstr_fd(strerror(errno), 2);
+        ft_putstr_fd("\n", 2);
         exit(1);
     }
     if (dup2(infile_fd,0) == -1)
@@ -39,7 +41,9 @@ static void    outfile_redirection(t_redir *redir)
     {
         ft_putstr_fd("minishell: ", 2);
         ft_putstr_fd(redir->target, 2);
-        ft_putstr_fd(": Permission denied\n", 2);
+        ft_putstr_fd(": ", 2);
+        ft_putstr_fd(strerror(errno), 2);
+        ft_putstr_fd("\n", 2);
         exit(1);
     }
     if (dup2(outfile_fd, 1) == -1)
@@ -56,7 +60,9 @@ static void    append_redirection(t_redir *redir)
     {
         ft_putstr_fd("minishell: ", 2);
         ft_putstr_fd(redir->target, 2);
-        ft_putstr_fd(": Permission denied\n", 2);
+        ft_putstr_fd(": ", 2);
+        ft_putstr_fd(strerror(errno), 2);
+        ft_putstr_fd("\n", 2);
         exit(1);
     }
     if (dup2(append_fd, 1) == -1)
@@ -133,7 +139,6 @@ static void    child_execution(t_cmd *cmd, t_env *env)
 }
 int check_redirection(t_cmd *cmd,t_env *env)
 {
-    // "echo hello > ls > " not handled yet
     int status;
     pid_t pid;
     

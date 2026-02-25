@@ -6,16 +6,18 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 19:09:18 by malhassa          #+#    #+#             */
-/*   Updated: 2026/02/24 05:21:28 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/25 22:05:18 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int execute_cd(t_cmd *cmd)
+int execute_cd(t_cmd *cmd, t_env *env)
 {
     char *home;
     
+    if (!cmd || !cmd->argv)
+        return (1);
     if (!cmd->argv[1])
     {
         home = getenv("HOME"); // should i replace it with new_env? and should home be freed?
@@ -49,7 +51,8 @@ int execute_echo(t_cmd *cmd)
     
     i = 1;
     newline = 1;
-    if (cmd->argv[1] && ft_strncmp(cmd->argv[1], "-n", 2) == 0)
+    if (cmd->argv[1] && cmd->argv[1][0] == '-' && cmd->argv[1][1] == 'n'
+        && cmd->argv[1][2] == '\0')
     {
         newline = 0;
         i++;

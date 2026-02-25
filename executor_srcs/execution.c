@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 15:59:52 by malhassa          #+#    #+#             */
-/*   Updated: 2026/02/23 05:47:44 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/25 20:29:17 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int execute_builtin(t_cmd *cmd, t_env *env)
     if (ft_strncmp(cmd->argv[0], "echo", 5) == 0)
         return (execute_echo(cmd));
     else if (ft_strncmp(cmd->argv[0], "cd", 3) == 0)
-        return (execute_cd(cmd));
+        return (execute_cd(cmd, env));
     else if (ft_strncmp(cmd->argv[0], "pwd", 4) == 0)
         return (execute_pwd());
     else if (ft_strncmp(cmd->argv[0], "env", 4) == 0)
@@ -40,12 +40,7 @@ int execute_command(t_cmd *cmd,t_env *env)
 
     path = find_command_path(find_full_path(env->envp), cmd->argv[0]);
     if (!path)
-    {
-        ft_putstr_fd("minishell: ", 2);
-        ft_putstr_fd(cmd->argv[0], 2);
-        ft_putstr_fd(": command not found\n", 2);
-        return (127);
-    }
+        return (path_error(cmd));
     pid = fork();
     if (pid == -1)
     {

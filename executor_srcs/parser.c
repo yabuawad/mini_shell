@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/20 18:00:00 by parser            #+#    #+#             */
-/*   Updated: 2026/02/25 03:15:55 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/25 20:46:03 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,49 @@ int is_quote(char c)
     return (c == '"' || c == '\'');
 }
 
+static void syntax_error(char *token)
+{
+    ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
+    ft_putstr_fd(token, 2);
+    ft_putstr_fd("'\n", 2);
+}
+
+static int validate_syntax(t_token *tokens)
+{
+    int prev_type;
+
+    prev_type = -1;
+    while (tokens)
+    {
+        if (tokens->type == 4 || tokens->type == 5)
+        {
+            if (prev_type == -1 || prev_type == 4 || prev_type == 5)
+            {
+                syntax_error(tokens->value);
+                return (0);
+            }
+            if (tokens->type == 4 && (!tokens->next || tokens->next->type == 4
+                    || tokens->next->type == 5))
+            {
+                syntax_error(!tokens->next ? "newline" : tokens->next->value);
+                return (0);
+            }
+        }
+        if (tokens->type == 1 || tokens->type == 2 || tokens->type == 3
+            || tokens->type == 6)
+        {
+            if (!tokens->next || tokens->next->type != 0)
+            {
+                syntax_error(!tokens->next ? "newline" : tokens->next->value);
+                return (0);
+            }
+        }
+        prev_type = tokens->type;
+        tokens = tokens->next;
+    }
+    return (1);
+}
+
 char *extract_quoted_string(char *str, int *i, char quote)
 {
     char    *result;
@@ -131,7 +174,8 @@ char *extract_word(char *str, int *i)
     if (!result)
         return (NULL);
     
-    while (str[*i] && !is_whitespace(str[*i]) && str[*i] != '<' && str[*i] != '>')
+    while (str[*i] && !is_whitespace(str[*i]) && str[*i] != '<' && str[*i] != '>'
+        && str[*i] != '|' && str[*i] != ';')
     {
         if (is_quote(str[*i]))
         {
@@ -153,8 +197,9 @@ char *extract_word(char *str, int *i)
         else
         {
             start = *i;
-            while (str[*i] && !is_whitespace(str[*i]) && str[*i] != '<' && 
-                   str[*i] != '>' && !is_quote(str[*i]))
+                 while (str[*i] && !is_whitespace(str[*i]) && str[*i] != '<' && 
+                     str[*i] != '>' && str[*i] != '|' && str[*i] != ';'
+                     && !is_quote(str[*i]))
                 (*i)++;
             len = *i - start;
             char *word_part = ft_substr(str, start, len);
@@ -304,6 +349,7 @@ t_cmd *cmd_new(void)
         return (NULL);
     cmd->argv = NULL;
     cmd->redirs = NULL;
+    cmd->has_pipe = 0;
     cmd->next = NULL;
     return (cmd);
 }
@@ -498,6 +544,11 @@ t_cmd *parse_input(char *input)
     if (!tokens)
         return (NULL);
     
+    if (!validate_syntax(tokens))
+    {
+        token_clear(&tokens);
+        return (NULL);
+    }
     commands = parse_tokens(tokens);
     token_clear(&tokens);
     

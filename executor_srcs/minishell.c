@@ -6,19 +6,22 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:04 by mohamed           #+#    #+#             */
-/*   Updated: 2026/02/25 17:37:20 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/25 20:25:25 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void  before_execution(int argc, char **argv, char **envp ,t_env *pipeline)
+static int  before_execution(int argc, char **argv, char **envp ,t_env *pipeline)
 {
     (void)argc;
     (void)argv;
     pipeline->envp = ft_envdup(envp); // set protection?
+    if (!pipeline->envp)
+        return (0);
     pipeline->last_exit_status = 0;
-    pipeline->cmd_head = NULL; 
+    pipeline->cmd_head = NULL;
+    return (1);
 }
 static void  after_execution(char *line,t_env *pipeline)
 {
@@ -61,12 +64,18 @@ static void execute_pipeline(t_env *pipeline)
     if (!pipeline || !pipeline->cmd_head)
         return;
     cmd = pipeline->cmd_head;
-    if (cmd->has_pipe == 1)
-        pipeline->last_exit_status = apply_pipe(cmd,pipeline);
-    else
+    while (cmd)
     {
-        while (cmd)
-        {           
+        if (cmd->has_pipe == 1)
+        {
+            pipeline->last_exit_status = apply_pipe(cmd,pipeline);
+            while (cmd && cmd->has_pipe == 1)
+                cmd = cmd->next;
+            if (cmd)
+                cmd = cmd->next;
+        }
+        else
+        {
             status = status_value(cmd,pipeline);
             if (status != -2)
                 pipeline->last_exit_status = status;
@@ -80,7 +89,8 @@ int main(int argc, char **argv, char **envp)
     char    *line;
     t_env   pipeline;
 
-    before_execution(argc,argv,envp,&pipeline);
+    if (!before_execution(argc,argv,envp,&pipeline))
+        return (0);
     while (1)
     {
         line = readline("minishell $ ");

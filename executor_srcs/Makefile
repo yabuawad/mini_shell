@@ -12,7 +12,7 @@ SRCS		= minishell.c \
 			  redirections_setup.c \
 			  additional_functions.c \
 			  envp_functions.c \
-			  error_display.c \
+			  error_handling.c \
 			  pipes_execution.c \
 			  parser.c \
 			  libft/ft_atoi.c \

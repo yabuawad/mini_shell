@@ -17,6 +17,8 @@ char    **new_environment(char **envp, char *cmd)
     int size_of_envp;
     int i;
     
+    if (!envp || !cmd)
+        return (NULL);
     size_of_envp = ft_2dstrlen(envp);
     new_envp = malloc(sizeof(char *) * (size_of_envp + 2));
     if (!new_envp)
@@ -40,13 +42,13 @@ char    **new_environment(char **envp, char *cmd)
     }
     i++;
     new_envp[i] = NULL;
-    free_2d(envp);
     return (new_envp);
 }
 int execute_export(t_cmd *cmd, t_env *env)
 {
     int i;
     int index;
+    char    **old_envp;
     
     if (!cmd->argv[1])
     {
@@ -71,9 +73,14 @@ int execute_export(t_cmd *cmd, t_env *env)
         }
         else
         {
-            env->envp = new_environment(env->envp,cmd->argv[i]);
+            old_envp = env->envp;
+            env->envp = new_environment(env->envp, cmd->argv[i]);
             if (!env->envp)
+            {
+                env->envp = old_envp;
                 return (1);
+            }
+            free_2d(old_envp);
         }
         i++;
     }
