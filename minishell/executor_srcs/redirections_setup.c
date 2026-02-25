@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 18:59:45 by malhassa          #+#    #+#             */
-/*   Updated: 2026/02/24 07:10:52 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/25 02:31:42 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ static void    heredoc_redirection(t_redir *redir)
         perror_exit("minishell: dup2",1);
     close(fd[0]);
 }
-static void    apply_redirections(t_redir *redir)
+void    apply_redirections(t_redir *redir)
 {
     while (redir)
     {

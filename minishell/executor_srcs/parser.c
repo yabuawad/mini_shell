@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/20 18:00:00 by parser            #+#    #+#             */
-/*   Updated: 2026/02/23 03:51:47 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/25 03:15:55 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -413,6 +413,8 @@ t_cmd *parse_tokens(t_token *tokens)
         {
             if (current_cmd && (current_cmd->argv || current_cmd->redirs))
             {
+                if (tokens->type == 4)  // If pipe follows this command
+                    current_cmd->has_pipe = 1;
                 cmd_add_back(&commands, current_cmd);
             }
             else if (current_cmd)

@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:18 by mohamed           #+#    #+#             */
-/*   Updated: 2026/02/24 06:47:09 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/25 16:35:16 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ typedef struct s_cmd
 {
     char			**argv;
     t_redir		*redirs;
+    int has_pipe;
     struct s_cmd	*next;
 }t_cmd;
 
@@ -53,9 +54,20 @@ typedef struct s_env
     t_cmd   *cmd_head;// the first command in the linked list
 }t_env;
 
+typedef struct s_pipes
+{
+    pid_t   *pids;
+    int status;
+    int fd[2];
+    int i;
+    int last_read;
+    int cmds_length;
+}t_pipes;
+
 char	*find_command_path(char *path, char *cmd);
 char	*find_full_path(char *envp[]);
 int execute_command(t_cmd *cmd,t_env *env);
+void    apply_redirections(t_redir *redir);
 int execute_builtin(t_cmd *cmd, t_env *env);
 int execute_cd(t_cmd *cmd);
 int is_builtin(const char *s);
@@ -64,6 +76,7 @@ int execute_pwd(void);
 int execute_echo(t_cmd *cmd);
 void    free_2d(char **array);
 int execute_exit(t_cmd *cmd,t_env *env);
+int apply_pipe(t_cmd *cmd,t_env *pipeline);
 int check_redirection(t_cmd *cmd,t_env *env);
 void print_exit(char *message, int exit_value);
 int ft_2dstrlen(char **str);
