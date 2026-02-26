@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 01:52:58 by mohamed           #+#    #+#             */
-/*   Updated: 2026/02/25 20:52:00 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/26 04:30:25 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,7 @@ int apply_pipe(t_cmd *cmd,t_env *pipeline)
         cmd = cmd->next;
         i++;
     }
+    
     status = last_process(cmd,pipeline,&pipes,i);
     return (status);
 }
