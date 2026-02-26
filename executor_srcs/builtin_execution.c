@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 19:09:18 by malhassa          #+#    #+#             */
-/*   Updated: 2026/02/26 03:58:49 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/26 04:27:52 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int execute_cd(t_cmd *cmd, t_env *env)
 {
     char *home;
     
-    (void)env;
+    // (void)env; //
     if (!cmd || !cmd->argv)
         return (1);
     if (!cmd->argv[1])

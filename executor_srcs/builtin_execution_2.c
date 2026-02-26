@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/20 16:15:59 by mohamed           #+#    #+#             */
-/*   Updated: 2026/02/26 04:04:33 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/26 04:28:49 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ char    **new_environment(char **envp, char *cmd)
     int i;
 
     i = 0;
-    new_envp = malloc(sizeof(char *) * (ft_2dstrlen(envp) + 2));
+    new_envp = malloc(sizeof(char *) * (ft_2dstrlen(envp) + 2));  
+    
     while (envp[i])
     {
         new_envp[i] = ft_strdup(envp[i]);
