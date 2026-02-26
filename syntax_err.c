@@ -5,7 +5,7 @@ int check_word(char *tokens,int i)
 {
     while(tokens[i] == ' ' && tokens[i])
         i++;
-    if((tokens[i] >= 'a' && tokens[i] <= 'z'))
+    if(ft_isalpha(tokens[i]))
         return 1;
     if(tokens[i] == '"' || tokens[i] == '\'')
      {
@@ -23,19 +23,19 @@ int check_word(char *tokens,int i)
         return 0;
 }                    
                         
-int check_red(char *tokens,int i)
-{
-    if(!tokens)
-        return 0;
-    while(tokens[i] == ' ')
-        i++;
-    if(!tokens[i])
-        return 0;
-    if(tokens[i] == '>' || tokens[i] == '<' || tokens[i] == '|')
-        return 0;
-    else 
-        return 1;
-}
+// int check_red(char *tokens,int i)
+// {
+//     if(!tokens)
+//         return 0;
+//     while(tokens[i] == ' ')
+//         i++;
+//     if(!tokens[i])
+//         return 0;
+//     if(tokens[i] == '>' || tokens[i] == '<' || tokens[i] == '|')
+//         return 0;
+//     else 
+//         return 1;
+// }
 
 int print_err(char *err_msg)
 {
@@ -59,8 +59,8 @@ int handled_errors(char **tokens,int i,int j,int dqt,int sqt)
                     return (print_err("pipe at end/beggining of cmd"));
                 if(tokens[i][j] == '|' && !check_word(tokens[i + 1],0))
                     return (print_err("pipe not followed by a cmd"));
-                if((tokens[i][j] == '>' || tokens[i][j] == '<')&& !check_red(tokens[i + 1],0))  
-                    return (print_err("redirection file invalid"));
+                // if((tokens[i][j] == '>' || tokens[i][j] == '<')&& !check_red(tokens[i + 1],0))  
+                //     return (print_err("redirection file invalid"));
                 // if((tokens[j] == '>' || tokens[j] == '<') && !check_redcmd(tokens,j))
                 //     return (print_err("redirection without a previous cmd"));
             }
