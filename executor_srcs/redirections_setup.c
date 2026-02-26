@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 18:59:45 by malhassa          #+#    #+#             */
-/*   Updated: 2026/02/26 04:38:47 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/26 06:58:31 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,7 @@ void    apply_redirections(t_redir *redir)
             heredoc_redirection(redir);
         redir = redir->next_redirection;
     }
+    
 }
 
 static void    child_execution(t_cmd *cmd, t_env *env)

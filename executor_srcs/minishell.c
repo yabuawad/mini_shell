@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:04 by mohamed           #+#    #+#             */
-/*   Updated: 2026/02/26 06:29:38 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/26 06:58:12 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ static void execute_pipeline(t_env *pipeline)
     cmd = pipeline->cmd_head;
     while (cmd)
     {
+        
         if (cmd->has_pipe == 1)
         {
             pipeline->last_exit_status = apply_pipe(cmd,pipeline);
