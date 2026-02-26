@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 18:59:45 by malhassa          #+#    #+#             */
-/*   Updated: 2026/02/25 22:02:04 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/26 02:55:46 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,12 +126,7 @@ static void    child_execution(t_cmd *cmd, t_env *env)
     }
     path = find_command_path(find_full_path(env->envp), cmd->argv[0]);
     if (!path)
-    {
-        ft_putstr_fd("minishell: ", 2);
-        ft_putstr_fd(cmd->argv[0], 2);
-        ft_putstr_fd(": command not found\n", 2);
-        exit(127);
-    }
+        path_error(cmd);
     execve(path, cmd->argv, env->envp);
     perror("execve");
     free(path);

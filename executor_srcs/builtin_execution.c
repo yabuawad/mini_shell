@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 19:09:18 by malhassa          #+#    #+#             */
-/*   Updated: 2026/02/25 22:05:18 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/26 03:58:49 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ int execute_cd(t_cmd *cmd, t_env *env)
 {
     char *home;
     
+    (void)env;
     if (!cmd || !cmd->argv)
         return (1);
     if (!cmd->argv[1])
@@ -27,21 +28,11 @@ int execute_cd(t_cmd *cmd, t_env *env)
             return (1);
         }
         if (chdir(home) == -1)
-        {
-            ft_putstr_fd("minishell: cd: ", 2);
-            ft_putstr_fd(home, 2);
-            ft_putstr_fd(": No such file or directory\n", 2);
-            return (1);
-        }
+            return (chdir_error(home));
         return (0);
     }
     if (chdir(cmd->argv[1]) == -1)
-    {
-        ft_putstr_fd("minishell: cd: ", 2);
-        ft_putstr_fd(cmd->argv[1], 2);
-        ft_putstr_fd(": No such file or directory\n", 2);
-        return (1);
-    }
+        return (chdir_error(cmd->argv[1]));
     return (0);
 }
 int execute_echo(t_cmd *cmd)
@@ -113,6 +104,3 @@ int execute_exit(t_cmd *cmd,t_env *env)
     exit(exit_c);
     return (0);
 }
-
-
-

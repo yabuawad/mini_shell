@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 06:46:15 by mohamed           #+#    #+#             */
-/*   Updated: 2026/02/25 20:28:57 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/26 03:13:26 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,4 +37,11 @@ int path_error(t_cmd *cmd)
     ft_putstr_fd(cmd->argv[0], 2);
     ft_putstr_fd(": command not found\n", 2);
     return (127);
+}
+int chdir_error(char *cmd)
+{
+    ft_putstr_fd("minishell: cd: ", 2);
+    ft_putstr_fd(cmd, 2);
+    ft_putstr_fd(": No such file or directory\n", 2);
+    return (1);
 }

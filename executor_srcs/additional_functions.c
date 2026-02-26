@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 21:43:19 by mohamed           #+#    #+#             */
-/*   Updated: 2026/02/20 16:04:39 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/26 03:42:59 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,19 @@ int ft_2dstrlen(char **str)
 }
 void print_exit(char *message, int exit_value) 
 {
-  ft_putendl_fd(message, 2);
-  exit(exit_value);
+    ft_putendl_fd(message, 2);
+    exit(exit_value);
+}
+
+int print_export(t_env *env)
+{
+    int i;
+
+    i = 0;
+    while (env->envp[i])
+    {
+        printf("declare -x %s\n", env->envp[i]);
+        i++;  
+    }
+    return (0);
 }

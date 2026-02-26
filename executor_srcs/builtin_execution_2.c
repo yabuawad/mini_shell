@@ -6,25 +6,20 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/20 16:15:59 by mohamed           #+#    #+#             */
-/*   Updated: 2026/02/23 03:49:46 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/26 04:04:33 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
 char    **new_environment(char **envp, char *cmd)
 {
     char    **new_envp;
-    int size_of_envp;
     int i;
-    
-    if (!envp || !cmd)
-        return (NULL);
-    size_of_envp = ft_2dstrlen(envp);
-    new_envp = malloc(sizeof(char *) * (size_of_envp + 2));
-    if (!new_envp)
-        return (NULL);
+
     i = 0;
-    while(envp[i])
+    new_envp = malloc(sizeof(char *) * (ft_2dstrlen(envp) + 2));
+    while (envp[i])
     {
         new_envp[i] = ft_strdup(envp[i]);
         if (!new_envp[i])
@@ -35,56 +30,34 @@ char    **new_environment(char **envp, char *cmd)
         i++;
     }
     new_envp[i] = ft_strdup(cmd);
-    if (!new_envp[i])
-    {
-        free_2d(new_envp);
-        return (NULL);
-    }
     i++;
     new_envp[i] = NULL;
+    free_2d(envp);
     return (new_envp);
 }
 int execute_export(t_cmd *cmd, t_env *env)
 {
     int i;
-    int index;
-    char    **old_envp;
+    int j;
     
-    if (!cmd->argv[1])
-    {
-        i = 0;
-        while (env->envp[i])
-        {
-            printf("declare -x %s\n", env->envp[i]);
-            i++;
-        }
-        return (0);
-    }
     i = 1;
+    if (!cmd->argv[1]) // only export command with no args
+        return (print_export(env));
     while (cmd->argv[i])
     {
-        index = envp_search(env->envp, cmd->argv[i]);
-        if (index >= 0)
-        {
-            free(env->envp[index]);
-            env->envp[index] = ft_strdup(cmd->argv[i]);
-            if (!env->envp[index])
-                return (1);
-        }
+        j = envp_search(env->envp,cmd->argv[i]);
+        if (j == -1) // new variable
+            env->envp = new_environment(env->envp,cmd->argv[i]);
         else
         {
-            old_envp = env->envp;
-            env->envp = new_environment(env->envp, cmd->argv[i]);
-            if (!env->envp)
-            {
-                env->envp = old_envp;
-                return (1);
-            }
-            free_2d(old_envp);
-        }
+            free(env->envp[j]);
+            env->envp[j] = ft_strdup(cmd->argv[i]);
+            if (!env->envp[j])
+                return (0);
+        } 
         i++;
-    }
-    return (0);
+    }    
+    return (1);
 }
 
 int execute_unset(t_cmd *cmd, t_env *env)
@@ -97,7 +70,7 @@ int execute_unset(t_cmd *cmd, t_env *env)
     while (cmd->argv[i])
     {
         index = envp_search(env->envp, cmd->argv[i]);
-        if (index >= 0)
+        if (index != -1)
         {
             free(env->envp[index]);
             j = index;
