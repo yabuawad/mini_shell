@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 01:52:58 by mohamed           #+#    #+#             */
-/*   Updated: 2026/02/26 04:30:25 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/26 06:31:56 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ static void child_process(t_pipes *pipes,int i ,t_cmd *cmd, t_env *pipeline)
         exit(execute_builtin(cmd, pipeline));
     else if (!cmd || !cmd->argv || !cmd->argv[0])
         exit(0);
-    else    
+    else
         exit(execute_command(cmd, pipeline));
 }
 int    before_execution(t_cmd *cmd,t_pipes *pipes)

@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:04 by mohamed           #+#    #+#             */
-/*   Updated: 2026/02/25 20:25:25 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/26 06:29:38 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ static int status_value(t_cmd *cmd,t_env *pipeline)
     else if (is_builtin(cmd->argv[0]))
         status = execute_builtin(cmd, pipeline);
     else if (!cmd->argv || !cmd->argv[0])
-        status = -2;
+        status = -2; 
     else
         status = execute_command(cmd, pipeline);
     return (status);
@@ -72,7 +72,7 @@ static void execute_pipeline(t_env *pipeline)
             while (cmd && cmd->has_pipe == 1)
                 cmd = cmd->next;
             if (cmd)
-                cmd = cmd->next;
+                cmd = cmd->next; 
         }
         else
         {
