@@ -86,53 +86,93 @@ int count_tok(char **tokenised) // count the size of tokens after seperating the
 //     return (pipedtok);
 // }
 
-char **check_pipes(char **tokenised, int i, int x)
-{
-    int j;
-    int found;
-    char **pipedtok;
-    int in_squote;
-    int in_dquote;
+// char **check_pipes(char **tokenised, int i, int x)
+// {
+//     int j;
+//     int found;
+//     char **pipedtok;
+//     int in_squote;
+//     int in_dquote;
 
-    pipedtok = malloc(sizeof(char *) * (count_tok(tokenised) + 1));
-    if (!pipedtok)
+//     pipedtok = malloc(sizeof(char *) * (count_tok(tokenised) + 1));
+//     if (!pipedtok)
+//         return NULL;
+
+//     while (tokenised[i])
+//     {
+//         j = 0;
+//         found = 0;
+//         in_squote = 0;
+//         in_dquote = 0;
+
+//         while (tokenised[i][j])
+//         {
+//             if (tokenised[i][j] == '\'' && !in_dquote)
+//                 in_squote = !in_squote;
+//             else if (tokenised[i][j] == '"' && !in_squote)
+//                 in_dquote = !in_dquote;
+
+//             else if (tokenised[i][j] == '|' && !in_squote && !in_dquote)
+//             {
+//                 if (j > 0)
+//                     pipedtok[x++] = ft_substr(tokenised[i], 0, j);
+//                 pipedtok[x++] = ft_strdup("|");
+//                 if (tokenised[i][j + 1])
+//                     pipedtok[x++] = ft_strdup(tokenised[i] + j + 1);
+//                 found = 1;
+//                 break;
+//             }
+//             j++;
+//         }
+
+//         if (!found)
+//             pipedtok[x++] = ft_strdup(tokenised[i]);
+
+//         i++;
+//     }
+
+//     pipedtok[x] = NULL;
+//     return (pipedtok);
+// }
+char **check_pipes(char **tokenised,int i,int x)
+{
+    char **out;
+    // int i = 0, x = 0;
+
+    out = malloc(sizeof(char *) * (count_tok(tokenised) + 1));
+    if (!out)
         return NULL;
 
     while (tokenised[i])
     {
-        j = 0;
-        found = 0;
-        in_squote = 0;
-        in_dquote = 0;
+        int j = 0, start = 0;
+        int in_s = 0, in_d = 0;
 
         while (tokenised[i][j])
         {
-            if (tokenised[i][j] == '\'' && !in_dquote)
-                in_squote = !in_squote;
-            else if (tokenised[i][j] == '"' && !in_squote)
-                in_dquote = !in_dquote;
+            if (tokenised[i][j] == '\'' && !in_d)
+                in_s = !in_s;
+            else if (tokenised[i][j] == '"' && !in_s)
+                in_d = !in_d;
 
-            else if (tokenised[i][j] == '|' && !in_squote && !in_dquote)
+            else if (tokenised[i][j] == '|' && !in_s && !in_d)
             {
-                if (j > 0)
-                    pipedtok[x++] = ft_substr(tokenised[i], 0, j);
-                pipedtok[x++] = ft_strdup("|");
-                if (tokenised[i][j + 1])
-                    pipedtok[x++] = ft_strdup(tokenised[i] + j + 1);
-                found = 1;
-                break;
+                if (j > start)
+                    out[x++] = ft_substr(tokenised[i], start, j - start);
+                out[x++] = ft_strdup("|");
+                start = j + 1;
             }
             j++;
         }
 
-        if (!found)
-            pipedtok[x++] = ft_strdup(tokenised[i]);
+        if (j > start)
+            out[x++] = ft_substr(tokenised[i], start, j - start);
 
         i++;
     }
 
-    pipedtok[x] = NULL;
-    return (pipedtok);
+    out[x] = NULL;
+    return out;
 }
 
 char **check_redir(char **str, int i, int j, int x)
