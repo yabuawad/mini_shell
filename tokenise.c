@@ -1,106 +1,22 @@
 #include "minishell.h"
 
-// char	**freearr(char **ptr)
-// {
-// 	int	i;
-// 	// int j;
 
-// 	// j = 0;
-// 	i = 0;
-// 	while (ptr[i])
-// 	{
-// 		free(ptr[i]);
-// 		i++;
-// 	}
-// 	free(ptr);
-// 	return (NULL);
-// }
-
-
-// int is_red(char *str,int i)
-// {
-//     return(str[i] == '<' || str[i] == '>');
-// }
-// int count_tok(char **tokenised,char sep) // count the size of tokens after seperating the pipe,so we can malloc the right size
-// {
-//     int i;
-//     int j;
-//     int counter;
-
-//     i = 0;
-//     counter =0;
-//     while(tokenised[i])
-//     {
-//         j = 0;
-//         while(tokenised[i][j])
-//         {
-//             if((tokenised[i][j] == '|' && ft_strlen(tokenised[i]) > 1) || (is_red(tokenised[i],j) && ft_strlen(tokenised[i]) > 2))
-//                 counter += 2;
-//             j++;
-//         }
-//         counter++;
-//         i++;
-//     }
-//     return(counter);
-// }
-
-
-char **check_pipes(char **tokenised,int i,int x)
+char **handle_pr(char **str)
 {
-    char **out;
-    // int i = 0, x = 0;
-
-    out = malloc(sizeof(char *) * 1024);
-    if (!out)
-        return NULL;
-
-    while (tokenised[i])
-    {
-        int j = 0, start = 0;
-        int in_s = 0, in_d = 0;
-
-        while (tokenised[i][j])
-        {
-            if (tokenised[i][j] == '\'' && !in_d)
-                in_s = !in_s;
-            else if (tokenised[i][j] == '"' && !in_s)
-                in_d = !in_d;
-
-            else if (tokenised[i][j] == '|' && !in_s && !in_d)
-            {
-                if (j > start)
-                    out[x++] = ft_substr(tokenised[i], start, j - start);
-                out[x++] = ft_strdup("|");
-                start = j + 1;
-            }
-            j++;
-        }
-
-        if (j > start)
-            out[x++] = ft_substr(tokenised[i], start, j - start);
-
-        i++;
-    }
-
-    out[x] = NULL;
-    return out;
-}
-
-char **check_redir(char **str, int i, int j, int x)
-{
-    int in_sqt, in_dqt;
-    int start;
-    char **tok = malloc(sizeof(char *) * 1024);
-
+    int     i;
+    int x;
+    char    **tok = malloc(sizeof(char *) * 1024);
     if (!tok)
         return NULL;
-
+    
+    i = 0;
+    x = 0;
     while (str[i])
     {
-        j = 0;
-        start = 0;
-        in_sqt = 0;
-        in_dqt = 0;
+        int j = 0;
+        int start = 0;
+        int in_sqt = 0;
+        int in_dqt = 0;
 
         while (str[i][j])
         {
@@ -110,12 +26,13 @@ char **check_redir(char **str, int i, int j, int x)
                 in_dqt = !in_dqt;
 
             else if (!in_sqt && !in_dqt
-                && (str[i][j] == '>' || str[i][j] == '<'))
+                && (str[i][j] == '|' || str[i][j] == '<' || str[i][j] == '>'))
             {
                 if (j > start)
                     tok[x++] = ft_substr(str[i], start, j - start);
 
-                if (str[i][j + 1] == str[i][j])
+                if ((str[i][j] == '<' || str[i][j] == '>')
+                    && str[i][j + 1] == str[i][j])
                 {
                     tok[x++] = ft_substr(str[i], j, 2);
                     j += 2;
@@ -132,7 +49,6 @@ char **check_redir(char **str, int i, int j, int x)
         }
         if (j > start)
             tok[x++] = ft_substr(str[i], start, j - start);
-
         i++;
     }
     tok[x] = NULL;
@@ -142,8 +58,7 @@ char **check_redir(char **str, int i, int j, int x)
 void  tokenise(char *line)
 {
     char  **seperated;
-    char **piped;
-    char **redirected;
+    char **tokenised;
     // char **errorless;    
     if(check_quotes(line,'"') < 0 || check_quotes(line,'\'') < 0) //check on unclosed quotes
     {
@@ -154,15 +69,13 @@ void  tokenise(char *line)
         seperated = sep(line,' ','"');
     else
         seperated = sep(line,' ','\''); // any other case? we pass the single
-    piped = check_pipes(seperated,0,0);
+    tokenised = handle_pr(seperated);
     freearr(seperated);
-    redirected = check_redir(piped,0,0,0);
-    freearr(piped);
-    if(handled_errors(redirected,0,0,0,0))
-        print_split(redirected);
+    if(handled_errors(tokenised,0,0,0,0))
+        print_split(tokenised);
     else
         printf("error\n");
-    freearr(redirected);
+    freearr(tokenised);
     // errorless = handled_errors(piped,0);
 }
 
