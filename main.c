@@ -2,7 +2,7 @@
 
 int main()
 {
-    // t_cmd *cmdlist;
+    t_cmd *cmdlist;
     while(1)
     {
         char *line = readline("minishell$ ");//we use readline instead of argvs to make the shell interactive,readline works while the program is running
@@ -10,10 +10,11 @@ int main()
             return 1;
         else
             add_history(line);
-        //char **tokens =
-         tokenise(line);
-        // (void)tokens;
-        // cmdlist = parse(tokens);
+        char **tokens = tokenise(line);
+        // if(!tokens)
+        //     return 1;
+        cmdlist = parse(tokens,0);
+        print_cmdlist(cmdlist);
         free(line);
     }
     rl_clear_history(); //clears history ,still not sure if this is the right placement

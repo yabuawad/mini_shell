@@ -27,7 +27,7 @@ typedef enum e_redir_type
     R_OUT,
     R_HEREDOC,
     R_APPEND
-} 	redir_type;
+}redir_type;
 
 typedef struct s_redir
 {
@@ -37,13 +37,20 @@ typedef struct s_redir
     struct s_redir *next_redirection;
 }t_redir;
 
-
 typedef struct s_cmd
 {
     char			**argv;
     t_redir		*redirs;
+    int has_pipe;
     struct s_cmd	*next;
-} 	t_cmd;
+}t_cmd;
+
+typedef struct s_env
+{
+    char **envp; // i need it for access() and parser needs it for expanding
+    int last_exit_status;
+    t_cmd   *cmd_head;// the first command in the linked list
+}t_env;
 
 // typedef struct s_token
 // {
@@ -57,7 +64,13 @@ char	**sep(char const *s, char c,char quote);
 void print_split(char **arr);
 int check_quotes(char *str,char c);
 char	**freearr(char **ptr);
-void tokenise(char *line);
+char **tokenise(char *line);
 char *removeqt(char *str);
 int handled_errors(char **tokens,int i,int j,int dqt,int sqt);
+t_cmd *parse(char **tokens,int i);
+t_cmd	*addnode(void);
+t_redir	*addredir(void);
+void print_argv(char **argv);
+void print_cmdlist(t_cmd *cmd);
+void print_redirs(t_redir *redir);
 #endif
