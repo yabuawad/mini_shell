@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 21:30:14 by mohamed           #+#    #+#             */
-/*   Updated: 2026/02/23 03:45:09 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/01 04:11:13 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,38 +36,48 @@ char **ft_envdup(char **envp)
     return (new_envp);
 }
 
-char    *variable_name(char **envp, int index)
+static char    *variable_name(char *var)
 {
     int i;
     char    *str;
     
     i = 0;
-    while(envp[index][i] && envp[index][i] != '=')
+    while(var[i] && var[i] != '=')
         i++;
     str = malloc(sizeof(char) * (i + 1));
     if (!str)
         return (NULL);
     i = 0;
-    while(envp[index][i] && envp[index][i] != '=')
+    while(var[i] && var[i] != '=')
     {
-        str[i] = envp[index][i];
+        str[i] = var[i];
         i++;
     }
     str[i] = '\0';
     return (str);
 }
-int envp_search(char **envp, char *name)
+int     envp_search(char **envp, char *name)
 {
     int i;
     int length;
+    char    *variable;
 
     i = 0;
-    length = ft_strlen(name);
     while (envp[i])
     {
-        if (ft_strncmp(envp[i], name, length) == 0 && envp[i][length] == '=')
+        variable = variable_name(name);
+        if (!variable)
+            return (-1);
+        length = ft_strlen(variable);
+        if (ft_strncmp(envp[i],variable,length) == 0)
+        {
+            if (variable)
+                free(variable);
             return (i);
+        }
         i++;
+        if (variable)
+            free(variable);
     }
     return (-1);
 }

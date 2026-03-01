@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:18 by mohamed           #+#    #+#             */
-/*   Updated: 2026/02/26 03:43:09 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/01 04:24:44 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,9 +66,8 @@ typedef struct s_pipes
 
 char	*find_command_path(char *path, char *cmd);
 int print_export(t_env *env);
-int fork_error(int fd[2],t_pipes *pipes);
+int pipes_cleanup(t_pipes *pipes);
 int chdir_error(char *cmd);
-int pipe_error(t_pipes *pipes);
 int path_error(t_cmd *cmd);
 char	*find_full_path(char *envp[]);
 int execute_command(t_cmd *cmd,t_env *env);
@@ -88,7 +87,7 @@ int ft_2dstrlen(char **str);
 char **ft_envdup(char **envp);
 int envp_search(char **envp, char *name);
 char    *find_envp_value(char **envp, char *name);
-char    *variable_name(char **envp, int index);
+int export_error(char *cmd);
 char    *add_varible(char *str);
 int execute_export(t_cmd *cmd, t_env *env);
 int execute_unset(t_cmd *cmd, t_env *env);

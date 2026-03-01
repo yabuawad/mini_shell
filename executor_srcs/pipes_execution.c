@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 01:52:58 by mohamed           #+#    #+#             */
-/*   Updated: 2026/02/26 06:58:20 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/01 03:08:03 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,10 @@ static int last_process(t_cmd *cmd,t_env *pipeline, t_pipes *pipes, int i)
     int status;
     
     if (!cmd)
-        return (1);
+        return (pipes_cleanup(pipes));
     pipes->pids[i] = fork();
     if (pipes->pids[i] < 0)
-        return (1);
+        return (pipes_cleanup(pipes));
     if (pipes->pids[i] == 0)
     {
         if (pipes->last_read != -1)
@@ -103,10 +103,10 @@ int apply_pipe(t_cmd *cmd,t_env *pipeline)
     while (cmd && cmd->has_pipe)
     {
         if (pipe(pipes.fd) == -1)
-            return (pipe_error(&pipes));
+            return (pipes_cleanup(&pipes));
         pipes.pids[i] = fork();
         if (pipes.pids[i] < 0)
-            return (fork_error(pipes.fd,&pipes));
+            return (pipes_cleanup(&pipes));
         if (pipes.pids[i] == 0)
             child_process(&pipes,i,cmd,pipeline);
         close(pipes.fd[1]);

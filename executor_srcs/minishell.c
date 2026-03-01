@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:04 by mohamed           #+#    #+#             */
-/*   Updated: 2026/02/26 06:58:12 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/28 22:49:35 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,12 @@ static int  before_execution(int argc, char **argv, char **envp ,t_env *pipeline
 {
     (void)argc;
     (void)argv;
-    pipeline->envp = ft_envdup(envp); // set protection?
+    pipeline->envp = ft_envdup(envp);
     if (!pipeline->envp)
+    {
+        ft_putendl_fd("malloc failed\n",2);
         return (0);
+    }
     pipeline->last_exit_status = 0;
     pipeline->cmd_head = NULL;
     return (1);
@@ -66,7 +69,6 @@ static void execute_pipeline(t_env *pipeline)
     cmd = pipeline->cmd_head;
     while (cmd)
     {
-        
         if (cmd->has_pipe == 1)
         {
             pipeline->last_exit_status = apply_pipe(cmd,pipeline);

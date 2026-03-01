@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 15:59:52 by malhassa          #+#    #+#             */
-/*   Updated: 2026/02/26 04:17:49 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/01 05:18:57 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int execute_command(t_cmd *cmd,t_env *env)
     pid = fork();
     if (pid == -1)
     {
-        perror("minishell: fork");
+        perror("minishell: fork\n");
         return (1);
     }
     if (pid == 0)

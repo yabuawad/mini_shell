@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 18:59:45 by malhassa          #+#    #+#             */
-/*   Updated: 2026/02/26 06:58:31 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/02/26 16:17:45 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ static void    append_redirection(t_redir *redir)
         perror_exit("minishell: dup2",1);
     if (close(append_fd) == -1)
         perror_exit("minishell: close",1);
-}
+}   
 static void    heredoc_redirection(t_redir *redir)
 {
     int fd[2];
@@ -83,10 +83,10 @@ static void    heredoc_redirection(t_redir *redir)
         if(!str)
             break;
         if (strcmp(str,redir->target) == 0)
-        //     break;
-        // write(fd[1], str, ft_strlen(str));
-        // write(fd[1],"\n",1);
-        // free(str);
+            break;
+        write(fd[1], str, ft_strlen(str));
+        write(fd[1],"\n",1);
+        free(str);
     }
     close(fd[1]);
     if (str)

@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 06:46:15 by mohamed           #+#    #+#             */
-/*   Updated: 2026/02/26 03:13:26 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/01 04:25:37 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,18 +17,23 @@ void    perror_exit(char *message,int exit_code)
     perror(message);
     exit(exit_code);
 }
-int fork_error(int fd[2],t_pipes *pipes)
+int pipes_cleanup(t_pipes *pipes)
 {
-    close(fd[0]);
-    close(fd[1]);
+    if (pipes->fd[0])
+        close(pipes->fd[0]);
+    if (pipes->fd[1])
+        close(pipes->fd[1]);
     if (pipes->last_read != -1)
         close(pipes->last_read);
+    if (pipes->pids)
+        free(pipes->pids);
     return (1);
 }
-int pipe_error(t_pipes *pipes)
+int export_error(char *cmd)
 {
-    if (pipes->last_read != -1)
-        close(pipes->last_read);
+    ft_putstr_fd("minishell: export: ",2);
+    ft_putstr_fd(cmd,2);
+    ft_putendl_fd(" : not a valid identifier",2);
     return (1);
 }
 int path_error(t_cmd *cmd)
