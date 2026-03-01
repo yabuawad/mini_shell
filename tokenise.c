@@ -1,6 +1,5 @@
 #include "minishell.h"
 
-
 char **handle_pr(char **str)
 {
     int     i;

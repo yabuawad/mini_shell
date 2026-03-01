@@ -67,10 +67,15 @@ char	**freearr(char **ptr);
 char **tokenise(char *line);
 char *removeqt(char *str);
 int handled_errors(char **tokens,int i,int j,int dqt,int sqt);
-t_cmd *parse(char **tokens,int i);
+t_cmd *parse(char **tokens,int i,int tmpsize);
 t_cmd	*addnode(void);
 t_redir	*addredir(void);
 void print_argv(char **argv);
 void print_cmdlist(t_cmd *cmd);
 void print_redirs(t_redir *redir);
+void fill_argv(t_cmd *cmd,char **tempargv,int tmpsize);
+t_cmd *end_cmd(t_cmd *current,int tmpsize,char **argv_temp,t_redir *redir_head);
+void set_redtype(t_redir *cmdredir,char **tokens,int i);
+void fill_red(t_redir *cmdredir,t_redir **redtail,t_redir **redir_head,char **tokens,int i);
+void lastcmd(t_cmd *current,char **argv_temp,t_redir *redir_head,int tmpsize);
 #endif

@@ -13,7 +13,7 @@ int main()
         char **tokens = tokenise(line);
         // if(!tokens)
         //     return 1;
-        cmdlist = parse(tokens,0);
+        cmdlist = parse(tokens,0,0);
         print_cmdlist(cmdlist);
         free(line);
     }

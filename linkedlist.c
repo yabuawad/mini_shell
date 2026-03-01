@@ -19,7 +19,7 @@ t_redir	*addredir(void)
 	newnode = malloc(sizeof(t_cmd));
 	if (!newnode)
 		return (NULL);
-	// newnode->fd = -1;
+	newnode->fd = -1;
 	newnode->target = NULL;
 	newnode->next_redirection = NULL;
     return (newnode);
@@ -56,7 +56,11 @@ void print_redirs(t_redir *redir)
 			printf("R_HEREDOC");
 		if (redir->type == R_APPEND)
 			printf("R_APPEND");
-		printf(" target=[%s]", redir->target ? redir->target : "NULL");
+
+		printf(" target=[%s] fd=%d\n",
+			   redir->target ? redir->target : "NULL",
+			   redir->fd);
+
 		redir = redir->next_redirection;
 		i++;
 	}
