@@ -1,30 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstadd_back.c                                   :+:      :+:    :+:   */
+/*   ft_lstadd_back_bonus.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: malhassa <malhassa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 20:30:41 by malhassa          #+#    #+#             */
-/*   Updated: 2025/08/27 00:40:55 by malhassa         ###   ########.fr       */
+/*   Updated: 2026/03/02 15:42:30 by malhassa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_lstadd_back(t_list **lst, t_list *new)
+void	ft_lstadd_back(t_list **lst, t_list *lst_new)
 {
 	t_list	*temp;
 
-	if (!new)
+	if (!lst_new)
 		return ;
 	if (*lst == NULL)
 	{
-		*lst = new;
+		*lst = lst_new;
 		return ;
 	}
 	temp = ft_lstlast(*lst);
-	temp->next = new;
+	temp->next = lst_new;
 }
 
 // // ====== test case ======
@@ -39,9 +39,9 @@ void	ft_lstadd_back(t_list **lst, t_list *new)
 //     int b = 20;
 //     int c = 30;
 
-//     node1 = ft_lstnew(&a);
-//     node2 = ft_lstnew(&b);
-//     node3 = ft_lstnew(&c);
+//     node1 = ft_lstlst_new(&a);
+//     node2 = ft_lstlst_new(&b);
+//     node3 = ft_lstlst_new(&c);
 
 //     ft_lstadd_back(&list, node1);
 //     ft_lstadd_back(&list, node2);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections_setup.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
+/*   By: malhassa <malhassa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 18:59:45 by malhassa          #+#    #+#             */
-/*   Updated: 2026/03/02 03:56:57 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/02 21:47:48 by malhassa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static void    infile_redirection(t_redir *redir)
 
     infile_fd = open(redir->target, O_RDONLY);
     if (infile_fd < 0)
-    {
+    {   
         ft_putstr_fd("minishell: ", 2);
         ft_putstr_fd(redir->target, 2);
         ft_putstr_fd(": ", 2);

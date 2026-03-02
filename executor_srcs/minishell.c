@@ -3,19 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
+/*   By: malhassa <malhassa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:04 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/02 03:56:25 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/02 21:45:58 by malhassa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "libft/libft.h"
 
 static int  initialization(int argc, char **argv, char **envp ,t_env *pipeline)
 {
-    (void)argc;
     (void)argv;
+    if (argc != 1)
+    {
+        ft_putendl_fd("more than one argument!",2);
+        return (0);
+    }
     pipeline->envp = ft_envdup(envp);
     if (!pipeline->envp)
     {
@@ -60,7 +65,7 @@ static void execute_commands(t_env *pipeline)
     {
         if (cmd->has_pipe == 1)
         {
-            pipeline->last_exit_status = apply_pipe(cmd,pipeline); // check on failure?
+            pipeline->last_exit_status = apply_pipe(cmd,pipeline);// check on failure?
             while (cmd && cmd->has_pipe == 1)
                 cmd = cmd->next;
             if (cmd)
@@ -94,6 +99,7 @@ int main(int argc, char **argv, char **envp)
         if (*line)
             add_history(line);   
         pipeline.cmd_head = parse_input(line);
+        
         execute_commands(&pipeline);
         memory_cleanup(line,&pipeline);
     }

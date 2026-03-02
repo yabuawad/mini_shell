@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   additional_functions.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
+/*   By: malhassa <malhassa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 21:43:19 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/02 03:27:50 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/02 15:51:31 by malhassa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
 void    free_2d(char **array)
 {
     int i;

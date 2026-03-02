@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   envp_functions.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
+/*   By: malhassa <malhassa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 21:30:14 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/01 19:10:26 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/02 21:29:18 by malhassa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ static char    *variable_name(char *var)
     char    *str;
     
     i = 0;
+    
     while(var[i] && var[i] != '=')
         i++;
     str = malloc(sizeof(char) * (i + 1));

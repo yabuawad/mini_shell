@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipes_execution.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
+/*   By: malhassa <malhassa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 01:52:58 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/02 03:34:17 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/02 21:21:05 by malhassa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,21 +56,31 @@ static int last_process(t_cmd *cmd,t_env *pipeline, t_pipes *pipes, int i)
 
 static void child_process(t_pipes *pipes,int i ,t_cmd *cmd, t_env *pipeline)
 {
+    char    *path;
+    
     if (i > 0)
-        dup2(pipes->last_read,0); // 
-    dup2(pipes->fd[1],1); // dup2 protection?
+        dup2(pipes->last_read,0); 
+    dup2(pipes->fd[1],1);
     if (pipes->last_read != -1)
         close(pipes->last_read);
-    close(pipes->fd[1]);   // close protection?
-    close(pipes->fd[0]);
+    if (pipes->fd[1] != -1)
+        close(pipes->fd[1]);
+    if (pipes->fd[0] != -1)
+        close(pipes->fd[0]);
     if (cmd->redirs)
-        exit(check_redirection(cmd,pipeline));
+        exit(check_redirection(cmd,pipeline)); // double fork
     else if (is_builtin(cmd->argv[0]))
         exit(execute_builtin(cmd, pipeline));
     else if (!cmd || !cmd->argv || !cmd->argv[0])
         exit(0);
     else
-        exit(execute_command(cmd, pipeline)); // double fork?
+    {
+        path = find_command_path(find_full_path(pipeline->envp),cmd->argv[0]);
+        if (!path)
+            path_error(cmd);
+        execve(path,cmd->argv,pipeline->envp);
+        exit(127);
+    }
 }
 static int    before_execution(t_cmd *cmd,t_pipes *pipes)
 {
@@ -89,6 +99,8 @@ static int    before_execution(t_cmd *cmd,t_pipes *pipes)
     if (!pipes->pids)
         return (0);
     pipes->last_read = -1; // maybe also fd[0]&fd[1] as -1, i need it for close protection
+    pipes->fd[0] = -1;
+    pipes->fd[1] = -1;
     return (1);
 }
 int apply_pipe(t_cmd *cmd,t_env *pipeline)

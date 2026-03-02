@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
+/*   By: malhassa <malhassa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:18 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/01 04:24:44 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/02 21:46:43 by malhassa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <errno.h>
-#include "../libft/libft.h"
+#include "libft/libft.h"
 
 typedef enum e_redir_type
 {

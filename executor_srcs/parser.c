@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
+/*   By: malhassa <malhassa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/20 18:00:00 by parser            #+#    #+#             */
-/*   Updated: 2026/03/02 03:46:28 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/02 16:17:58 by malhassa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -590,6 +590,8 @@ void free_redirections(t_redir *redirs)
     while (current)
     {
         temp = current->next_redirection;
+		if (current->fd != -1)
+			close(current->fd);
         if (current->target)
             free(current->target);
         free(current);
