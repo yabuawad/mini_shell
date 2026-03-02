@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 21:30:14 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/01 04:11:13 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/01 19:10:26 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,15 +94,3 @@ char    *find_envp_value(char **envp, char *name)
     return (envp[i] + length);
 }
 
-char    *add_varible(char *str)
-{
-    char    *new_var;
-    
-    if (ft_strchr(str,'='))
-        new_var = malloc(ft_strlen(str) + 3);
-    else
-        new_var = malloc(ft_strlen(str) + 1);
-    if (!new_var)
-        return (NULL);
-    return (new_var);
-}

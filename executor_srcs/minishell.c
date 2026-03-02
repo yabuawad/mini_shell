@@ -6,13 +6,13 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:04 by mohamed           #+#    #+#             */
-/*   Updated: 2026/02/28 22:49:35 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/02 03:56:25 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int  before_execution(int argc, char **argv, char **envp ,t_env *pipeline)
+static int  initialization(int argc, char **argv, char **envp ,t_env *pipeline)
 {
     (void)argc;
     (void)argv;
@@ -26,25 +26,14 @@ static int  before_execution(int argc, char **argv, char **envp ,t_env *pipeline
     pipeline->cmd_head = NULL;
     return (1);
 }
-static void  after_execution(char *line,t_env *pipeline)
+static void  memory_cleanup(char *line,t_env *pipeline)
 {
     if (pipeline->cmd_head)
             free_commands(pipeline->cmd_head);
         pipeline->cmd_head = NULL;
         free(line);
 }
-int is_builtin(const char *s)
-{
-    if (!s || !*s)
-        return 0;
-    return (ft_strncmp(s, "echo",5) == 0
-        ||  ft_strncmp(s, "cd",3) == 0
-        ||  ft_strncmp(s, "pwd",4) == 0
-        ||  ft_strncmp(s, "export",7) == 0
-        ||  ft_strncmp(s, "unset",6) == 0
-        ||  ft_strncmp(s, "env",4) == 0
-        ||  ft_strncmp(s, "exit",5) == 0);
-}
+
 static int status_value(t_cmd *cmd,t_env *pipeline)
 {
     int status;
@@ -59,7 +48,7 @@ static int status_value(t_cmd *cmd,t_env *pipeline)
         status = execute_command(cmd, pipeline);
     return (status);
 }
-static void execute_pipeline(t_env *pipeline)
+static void execute_commands(t_env *pipeline)
 {
     t_cmd   *cmd;
     int status;
@@ -71,7 +60,7 @@ static void execute_pipeline(t_env *pipeline)
     {
         if (cmd->has_pipe == 1)
         {
-            pipeline->last_exit_status = apply_pipe(cmd,pipeline);
+            pipeline->last_exit_status = apply_pipe(cmd,pipeline); // check on failure?
             while (cmd && cmd->has_pipe == 1)
                 cmd = cmd->next;
             if (cmd)
@@ -92,7 +81,7 @@ int main(int argc, char **argv, char **envp)
     char    *line;
     t_env   pipeline;
 
-    if (!before_execution(argc,argv,envp,&pipeline))
+    if (!initialization(argc,argv,envp,&pipeline))
         return (0);
     while (1)
     {
@@ -105,8 +94,8 @@ int main(int argc, char **argv, char **envp)
         if (*line)
             add_history(line);   
         pipeline.cmd_head = parse_input(line);
-        execute_pipeline(&pipeline);
-        after_execution(line,&pipeline);
+        execute_commands(&pipeline);
+        memory_cleanup(line,&pipeline);
     }
     free_2d(pipeline.envp);
     return (0);

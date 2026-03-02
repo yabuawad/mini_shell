@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 21:43:19 by mohamed           #+#    #+#             */
-/*   Updated: 2026/02/26 16:41:26 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/02 03:27:50 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,4 +51,16 @@ int print_export(t_env *env)
         i++;  
     }
     return (0);
+}
+int is_builtin(const char *s)
+{
+    if (!s || !*s)
+        return 0;
+    return (ft_strncmp(s, "echo",5) == 0
+        ||  ft_strncmp(s, "cd",3) == 0
+        ||  ft_strncmp(s, "pwd",4) == 0
+        ||  ft_strncmp(s, "export",7) == 0
+        ||  ft_strncmp(s, "unset",6) == 0
+        ||  ft_strncmp(s, "env",4) == 0
+        ||  ft_strncmp(s, "exit",5) == 0);
 }

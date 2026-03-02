@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 06:46:15 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/01 04:25:37 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/02 03:31:22 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@ void    perror_exit(char *message,int exit_code)
 }
 int pipes_cleanup(t_pipes *pipes)
 {
-    if (pipes->fd[0])
+    if (pipes->fd[0]) //  or if (pipes->fd[0] == -1)?
         close(pipes->fd[0]);
-    if (pipes->fd[1])
+    if (pipes->fd[1])// same for here?
         close(pipes->fd[1]);
     if (pipes->last_read != -1)
         close(pipes->last_read);

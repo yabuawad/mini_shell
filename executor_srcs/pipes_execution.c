@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 01:52:58 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/01 03:08:03 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/02 03:34:17 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ static int    wait_for_all(t_pipes *pipes)
         waitpid(pipes->pids[i],&status,0);
         i++;
     }
-    free(pipes->pids);
     return (WEXITSTATUS(status));
 }
 static int last_process(t_cmd *cmd,t_env *pipeline, t_pipes *pipes, int i)
@@ -51,17 +50,18 @@ static int last_process(t_cmd *cmd,t_env *pipeline, t_pipes *pipes, int i)
     if (pipes->last_read != -1)
         close(pipes->last_read);
     status = wait_for_all(pipes);
+    pipes_cleanup(pipes);
     return (status);
 }
 
 static void child_process(t_pipes *pipes,int i ,t_cmd *cmd, t_env *pipeline)
 {
     if (i > 0)
-        dup2(pipes->last_read,0);
-    dup2(pipes->fd[1],1);
+        dup2(pipes->last_read,0); // 
+    dup2(pipes->fd[1],1); // dup2 protection?
     if (pipes->last_read != -1)
         close(pipes->last_read);
-    close(pipes->fd[1]);   
+    close(pipes->fd[1]);   // close protection?
     close(pipes->fd[0]);
     if (cmd->redirs)
         exit(check_redirection(cmd,pipeline));
@@ -70,9 +70,9 @@ static void child_process(t_pipes *pipes,int i ,t_cmd *cmd, t_env *pipeline)
     else if (!cmd || !cmd->argv || !cmd->argv[0])
         exit(0);
     else
-        exit(execute_command(cmd, pipeline));
+        exit(execute_command(cmd, pipeline)); // double fork?
 }
-int    before_execution(t_cmd *cmd,t_pipes *pipes)
+static int    before_execution(t_cmd *cmd,t_pipes *pipes)
 {
     int i;
     t_cmd   *temp;
@@ -88,7 +88,7 @@ int    before_execution(t_cmd *cmd,t_pipes *pipes)
     pipes->pids = malloc(sizeof(pid_t) * pipes->cmds_length);
     if (!pipes->pids)
         return (0);
-    pipes->last_read = -1;
+    pipes->last_read = -1; // maybe also fd[0]&fd[1] as -1, i need it for close protection
     return (1);
 }
 int apply_pipe(t_cmd *cmd,t_env *pipeline)
@@ -98,7 +98,7 @@ int apply_pipe(t_cmd *cmd,t_env *pipeline)
     int i;
     
     if (!before_execution(cmd,&pipes))
-        return (1);
+        return (1); // should i display an error messgae here?
     i = 0;
     while (cmd && cmd->has_pipe)
     {

@@ -4,6 +4,7 @@ CC			= cc
 CFLAGS		= -Wall -Wextra -Werror -I.
 LDFLAGS		= -lreadline
 
+
 SRCS		= minishell.c \
 			  builtin_execution.c \
 			  builtin_execution_2.c \

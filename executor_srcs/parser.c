@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/20 18:00:00 by parser            #+#    #+#             */
-/*   Updated: 2026/02/25 20:46:03 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/02 03:46:28 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 typedef struct s_token
 {
-    char    *value;
-    int     type; // 0=word, 1=redirect_in, 2=redirect_out, 3=redirect_append
+    char *value;
+    int type; // 0=word, 1=redirect_in, 2=redirect_out, 3=redirect_append
     struct s_token *next;
-}t_token;
+} t_token;
 
 // ============================================================================
 // TOKEN UTILITIES
@@ -26,7 +26,7 @@ typedef struct s_token
 t_token *token_new(char *value, int type)
 {
     t_token *token;
-    
+
     token = malloc(sizeof(t_token));
     if (!token)
         return (NULL);
@@ -44,7 +44,7 @@ t_token *token_new(char *value, int type)
 void token_add_back(t_token **head, t_token *new_token)
 {
     t_token *current;
-    
+
     if (!head || !new_token)
         return;
     if (!*head)
@@ -62,7 +62,7 @@ void token_clear(t_token **head)
 {
     t_token *current;
     t_token *temp;
-    
+
     if (!head)
         return;
     current = *head;
@@ -79,7 +79,7 @@ void token_clear(t_token **head)
 int token_list_size(t_token *head)
 {
     int size;
-    
+
     size = 0;
     while (head)
     {
@@ -124,15 +124,13 @@ static int validate_syntax(t_token *tokens)
                 syntax_error(tokens->value);
                 return (0);
             }
-            if (tokens->type == 4 && (!tokens->next || tokens->next->type == 4
-                    || tokens->next->type == 5))
+            if (tokens->type == 4 && (!tokens->next || tokens->next->type == 4 || tokens->next->type == 5))
             {
                 syntax_error(!tokens->next ? "newline" : tokens->next->value);
                 return (0);
             }
         }
-        if (tokens->type == 1 || tokens->type == 2 || tokens->type == 3
-            || tokens->type == 6)
+        if (tokens->type == 1 || tokens->type == 2 || tokens->type == 3 || tokens->type == 6)
         {
             if (!tokens->next || tokens->next->type != 0)
             {
@@ -148,10 +146,10 @@ static int validate_syntax(t_token *tokens)
 
 char *extract_quoted_string(char *str, int *i, char quote)
 {
-    char    *result;
-    int     start;
-    int     len;
-    
+    char *result;
+    int start;
+    int len;
+
     (*i)++; // skip opening quote
     start = *i;
     while (str[*i] && str[*i] != quote)
@@ -165,25 +163,27 @@ char *extract_quoted_string(char *str, int *i, char quote)
 
 char *extract_word(char *str, int *i)
 {
-    char    *result;
-    char    *temp;
-    int     start;
-    int     len;
-    
+    char *result;
+    char *temp;
+    char *joined;
+    char *word_part;
+    int start;
+    int len;
+    char quote;
+
     result = ft_strdup("");
     if (!result)
         return (NULL);
-    
-    while (str[*i] && !is_whitespace(str[*i]) && str[*i] != '<' && str[*i] != '>'
-        && str[*i] != '|' && str[*i] != ';')
+
+    while (str[*i] && !is_whitespace(str[*i]) && str[*i] != '<' && str[*i] != '>' && str[*i] != '|' && str[*i] != ';')
     {
         if (is_quote(str[*i]))
         {
-            char quote = str[*i];
+            quote = str[*i];
             temp = extract_quoted_string(str, i, quote);
             if (temp)
             {
-                char *joined = ft_strjoin(result, temp);
+                joined = ft_strjoin(result, temp);
                 free(temp);
                 if (!joined)
                 {
@@ -197,23 +197,22 @@ char *extract_word(char *str, int *i)
         else
         {
             start = *i;
-                 while (str[*i] && !is_whitespace(str[*i]) && str[*i] != '<' && 
-                     str[*i] != '>' && str[*i] != '|' && str[*i] != ';'
-                     && !is_quote(str[*i]))
+            while (str[*i] && !is_whitespace(str[*i]) && str[*i] != '<' &&
+                   str[*i] != '>' && str[*i] != '|' && str[*i] != ';' && !is_quote(str[*i]))
                 (*i)++;
             len = *i - start;
-            char *word_part = ft_substr(str, start, len);
+            word_part = ft_substr(str, start, len);
             if (word_part)
             {
-                temp = ft_strjoin(result, word_part);
+                joined = ft_strjoin(result, word_part);
                 free(word_part);
-                if (!temp)
+                if (!joined)
                 {
                     free(result);
                     return (NULL);
                 }
                 free(result);
-                result = temp;
+                result = joined;
             }
         }
     }
@@ -223,32 +222,34 @@ char *extract_word(char *str, int *i)
 t_token *tokenize(char *input)
 {
     t_token *tokens;
-    int     i;
-    char    *word;
-    
+    t_token *new_token;
+    int i;
+    char *word;
+
     tokens = NULL;
     i = 0;
-    
+
     while (input[i])
     {
         // Skip whitespace
         while (input[i] && is_whitespace(input[i]))
             i++;
-        
+
         if (!input[i])
             break;
-        
+
+        new_token = NULL;
         // Check for redirections
         if (input[i] == '<')
         {
             if (input[i + 1] == '<')
             {
-                token_add_back(&tokens, token_new("<<", 6));
+                new_token = token_new("<<", 6);
                 i += 2;
             }
             else
             {
-                token_add_back(&tokens, token_new("<", 1));
+                new_token = token_new("<", 1);
                 i++;
             }
         }
@@ -256,36 +257,49 @@ t_token *tokenize(char *input)
         {
             if (input[i + 1] == '>')
             {
-                token_add_back(&tokens, token_new(">>", 3));
+                new_token = token_new(">>", 3);
                 i += 2;
             }
             else
             {
-                token_add_back(&tokens, token_new(">", 2));
+                new_token = token_new(">", 2);
                 i++;
             }
         }
         else if (input[i] == '|')
         {
-            token_add_back(&tokens, token_new("|", 4));
+            new_token = token_new("|", 4);
             i++;
         }
         else if (input[i] == ';')
         {
-            token_add_back(&tokens, token_new(";", 5));
+            new_token = token_new(";", 5);
             i++;
         }
         else
         {
             // Extract word (handles quotes)
             word = extract_word(input, &i);
-            if (word && *word)
-                token_add_back(&tokens, token_new(word, 0));
-            if (word)
-                free(word);
+            if (!word)
+            {
+                token_clear(&tokens);
+                return (NULL);
+            }
+            if (*word)
+            {
+                new_token = token_new(word, 0);
+            }
+            free(word);
         }
+        
+        if (!new_token)
+        {
+            token_clear(&tokens);
+            return (NULL);
+        }
+        token_add_back(&tokens, new_token);
     }
-    
+
     return (tokens);
 }
 
@@ -296,7 +310,7 @@ t_token *tokenize(char *input)
 t_redir *redir_new(char *target, int type)
 {
     t_redir *redir;
-    
+
     redir = malloc(sizeof(t_redir));
     if (!redir)
         return (NULL);
@@ -322,7 +336,7 @@ t_redir *redir_new(char *target, int type)
 void redir_add_back(t_redir **head, t_redir *new_redir)
 {
     t_redir *current;
-    
+
     if (!head || !new_redir)
         return;
     if (!*head)
@@ -343,7 +357,7 @@ void redir_add_back(t_redir **head, t_redir *new_redir)
 t_cmd *cmd_new(void)
 {
     t_cmd *cmd;
-    
+
     cmd = malloc(sizeof(t_cmd));
     if (!cmd)
         return (NULL);
@@ -357,7 +371,7 @@ t_cmd *cmd_new(void)
 void cmd_add_back(t_cmd **head, t_cmd *new_cmd)
 {
     t_cmd *current;
-    
+
     if (!head || !new_cmd)
         return;
     if (!*head)
@@ -374,7 +388,7 @@ void cmd_add_back(t_cmd **head, t_cmd *new_cmd)
 int count_argv(t_token *tokens)
 {
     int count;
-    
+
     count = 0;
     while (tokens && tokens->type == 0)
     {
@@ -386,7 +400,7 @@ int count_argv(t_token *tokens)
 void free_argv(char **argv)
 {
     int i;
-    
+
     if (!argv)
         return;
     i = 0;
@@ -403,15 +417,15 @@ char **build_argv(t_token *tokens)
     char **argv;
     int argc;
     int i;
-    
+
     argc = count_argv(tokens);
     if (argc == 0)
         return (NULL);
-    
+
     argv = malloc(sizeof(char *) * (argc + 1));
     if (!argv)
         return (NULL);
-    
+
     i = 0;
     while (tokens && tokens->type == 0)
     {
@@ -425,11 +439,9 @@ char **build_argv(t_token *tokens)
         tokens = tokens->next;
     }
     argv[i] = NULL;
-    
+
     return (argv);
 }
-
-
 
 // ============================================================================
 // MAIN PARSER
@@ -437,14 +449,14 @@ char **build_argv(t_token *tokens)
 
 t_cmd *parse_tokens(t_token *tokens)
 {
-    t_cmd   *commands;
-    t_cmd   *current_cmd;
+    t_cmd *commands;
+    t_cmd *current_cmd;
     t_redir *new_redir;
-    int     redir_type;
-    
+    int redir_type;
+
     commands = NULL;
     current_cmd = NULL;
-    
+
     while (tokens)
     {
         // Skip empty/null tokens
@@ -453,46 +465,54 @@ t_cmd *parse_tokens(t_token *tokens)
             tokens = tokens->next;
             continue;
         }
-        
+
         // Start new command
         if (current_cmd == NULL || tokens->type == 4 || tokens->type == 5)
         {
             if (current_cmd && (current_cmd->argv || current_cmd->redirs))
             {
-                if (tokens->type == 4)  // If pipe follows this command
+                if (tokens->type == 4) // If pipe follows this command
                     current_cmd->has_pipe = 1;
                 cmd_add_back(&commands, current_cmd);
             }
             else if (current_cmd)
             {
-                free(current_cmd);
+                free_commands(current_cmd);
             }
             current_cmd = cmd_new();
             if (!current_cmd)
-                return (commands);
-            
+            {
+                free_commands(commands);
+                return (NULL);
+            }
+
             if (tokens->type == 4 || tokens->type == 5) // pipe or semicolon
             {
                 tokens = tokens->next;
                 continue;
             }
         }
-        
+
         // Handle redirections
         if (tokens->type == 1 || tokens->type == 2 || tokens->type == 3 || tokens->type == 6)
         {
             redir_type = tokens->type;
             tokens = tokens->next;
-            
+
             // Skip whitespace
             while (tokens && !tokens->value)
                 tokens = tokens->next;
-            
+
             if (tokens && tokens->type == 0)
             {
                 new_redir = redir_new(tokens->value, redir_type);
-                if (new_redir)
-                    redir_add_back(&current_cmd->redirs, new_redir);
+                if (!new_redir)
+                {
+                    free_commands(commands);
+                    free_commands(current_cmd);
+                    return (NULL);
+                }
+                redir_add_back(&current_cmd->redirs, new_redir);
                 tokens = tokens->next;
             }
         }
@@ -502,7 +522,13 @@ t_cmd *parse_tokens(t_token *tokens)
             if (!current_cmd->argv)
             {
                 current_cmd->argv = build_argv(tokens);
-                
+                if (!current_cmd->argv)
+                {
+                    free_commands(commands);
+                    free_commands(current_cmd);
+                    return (NULL);
+                }
+
                 // Skip tokens we already processed
                 int word_count = count_argv(tokens);
                 for (int i = 0; i < word_count; i++)
@@ -518,13 +544,13 @@ t_cmd *parse_tokens(t_token *tokens)
             tokens = tokens->next;
         }
     }
-    
+
     // Add last command
     if (current_cmd && (current_cmd->argv || current_cmd->redirs))
         cmd_add_back(&commands, current_cmd);
     else if (current_cmd)
-        free(current_cmd);
-    
+        free_commands(current_cmd);
+
     return (commands);
 }
 
@@ -535,15 +561,15 @@ t_cmd *parse_tokens(t_token *tokens)
 t_cmd *parse_input(char *input)
 {
     t_token *tokens;
-    t_cmd   *commands;
-    
+    t_cmd *commands;
+
     if (!input || !*input)
         return (NULL);
-    
+
     tokens = tokenize(input);
     if (!tokens)
         return (NULL);
-    
+
     if (!validate_syntax(tokens))
     {
         token_clear(&tokens);
@@ -551,7 +577,7 @@ t_cmd *parse_input(char *input)
     }
     commands = parse_tokens(tokens);
     token_clear(&tokens);
-    
+
     return (commands);
 }
 
@@ -559,7 +585,7 @@ void free_redirections(t_redir *redirs)
 {
     t_redir *current;
     t_redir *temp;
-    
+
     current = redirs;
     while (current)
     {
@@ -575,7 +601,7 @@ void free_commands(t_cmd *cmd)
 {
     t_cmd *current;
     t_cmd *temp;
-    
+
     current = cmd;
     while (current)
     {

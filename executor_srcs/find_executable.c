@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 15:52:53 by malhassa          #+#    #+#             */
-/*   Updated: 2026/02/24 17:25:19 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/01 05:22:42 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ char	*find_full_path(char *envp[])
 	}
 	return (NULL);
 }
+
 
 char	*access_checker(char **str, char *cmd)
 {

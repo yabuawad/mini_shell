@@ -6,13 +6,13 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/20 16:15:59 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/01 04:44:44 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/01 19:00:06 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char    **new_environment(char **envp, char *cmd)
+static char    **new_environment(char **envp, char *cmd)
 {
     char    **new_envp;
     int i;
