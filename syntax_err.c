@@ -57,8 +57,8 @@ int handled_errors(char **tokens,int i,int j,int dqt,int sqt)
             {
                 if(tokens[i][j] == '|' && (i == 0 || !tokens[i+ 1])) 
                     return (print_err("pipe at end/beggining of cmd"));
-                if(tokens[i][j] == '|' && !check_word(tokens[i + 1],0))
-                    return (print_err("pipe not followed by a cmd"));
+                // if(tokens[i][j] == '|' && !check_word(tokens[i + 1],0))
+                //     return (print_err("pipe not followed by a cmd"));
                 if((tokens[i][j] == '>' || tokens[i][j] == '<')&& !check_red(tokens[i + 1],0))  
                     return (print_err("redirection file invalid"));
                 if((tokens[i][j] == '>' || tokens[i][j] == '<') && i == 0)

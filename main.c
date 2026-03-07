@@ -1,7 +1,9 @@
 #include "minishell.h"
 
-int main()
+int main(int argc,char **argv,char **env)
 {
+    (void)argc;
+    (void)argv;
     t_cmd *cmdlist;
     while(1)
     {
@@ -15,6 +17,7 @@ int main()
         //     return 1;
         cmdlist = parse(tokens,0,0);
         print_cmdlist(cmdlist);
+        expand(cmdlist,env);
         free(line);
     }
     rl_clear_history(); //clears history ,still not sure if this is the right placement
