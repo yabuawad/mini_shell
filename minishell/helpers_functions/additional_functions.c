@@ -6,11 +6,11 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 21:43:19 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/05 20:59:12 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/09 06:07:00 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 void    free_2d(char **array)
 {

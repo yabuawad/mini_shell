@@ -6,11 +6,11 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/20 16:15:59 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/05 21:39:02 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/09 06:07:12 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 static char    **new_environment(char **envp, char *cmd)
 {
@@ -62,27 +62,47 @@ static int  env_update(t_cmd *cmd, t_env *shell, int i ,int j)
     }
     return (1);
 }
+static int export_validation(char  *cmd)
+{
+    int i;
+    
+    i = 0;
+    if (!cmd[0] || !cmd)
+        return (export_error(""));
+    if (!ft_isalpha(cmd[0]) && cmd[0] != '_')
+        return (export_error(cmd));
+    i = 1;
+    while (cmd[i] && cmd[i] != '=')
+    {
+        if (!ft_isalnum(cmd[i]) && cmd[i] != '_')
+            return (export_error(cmd));
+        i++;
+    }
+    return (0);
+}
 int execute_export(t_cmd *cmd, t_env *shell)
 {
     int i;
     int j;
+    int had_error;
     
     i = 1;
+    had_error = 0;
     if (!cmd->argv[1])
         return (print_export(shell));
     while (cmd->argv[i])
     {
-        if (!ft_isalpha(cmd->argv[i][0]))
-            export_error(cmd->argv[i]);
+        if (export_validation(cmd->argv[i]))
+            had_error = 1;
         else
         {
             j = envp_search(shell->envp,cmd->argv[i]);
             if (!env_update(cmd,shell,i,j))
                 return (1);
         }
-        i++;
+            i++;
     }    
-    return (0);
+    return (had_error);
 }
 
 int execute_unset(t_cmd *cmd, t_env *shell)

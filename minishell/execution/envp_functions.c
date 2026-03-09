@@ -6,11 +6,11 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 21:30:14 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/05 21:39:54 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/09 06:11:40 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 char **ft_envdup(char **envp,int is_new)
 {
@@ -27,6 +27,7 @@ char **ft_envdup(char **envp,int is_new)
         new_envp[i] = ft_strdup(envp[i]);
         if (!new_envp[i])
         {
+            new_envp[i] = NULL;
             free_2d(new_envp);
             return (NULL);
         }
@@ -63,23 +64,22 @@ int     envp_search(char **envp, char *name)
     int length;
     char    *variable;
 
+    variable = variable_name(name);
+    if (!variable)
+        return (-1);
+    length = ft_strlen(variable);
     i = 0;
     while (envp[i])
     {
-        variable = variable_name(name);
-        if (!variable)
-            return (-1);
-        length = ft_strlen(variable);
-        if (ft_strncmp(envp[i],variable,length) == 0)
+        if (ft_strncmp(envp[i],variable,length) == 0 
+            && (envp[i][length] == '=' || envp[i][length] == '\0'))
         {
-            if (variable)
-                free(variable);
+            free(variable);
             return (i);
         }
         i++;
-        if (variable)
-            free(variable);
     }
+    free(variable);
     return (-1);
 }
 

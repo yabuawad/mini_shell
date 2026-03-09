@@ -6,11 +6,11 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 01:52:58 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/05 19:54:25 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/09 06:08:15 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 static void execute_last_process(t_cmd *cmd, t_env *shell)
 {
@@ -24,8 +24,13 @@ static void execute_last_process(t_cmd *cmd, t_env *shell)
         exit(execute_builtin(cmd, shell));
     path = find_command_path(find_full_path(shell->envp), cmd->argv[0]);
     if (!path)
+    {
+        if (ft_strchr(cmd->argv[0], '/'))
+            exit(exec_error(cmd->argv[0]));
         exit(path_error(cmd));
+    }
     execve(path, cmd->argv, shell->envp);
+    perror("execve");
     free(path);
     exit(127);
 }
@@ -74,7 +79,11 @@ static void child_process(t_pipes *pipes,int i ,t_cmd *cmd, t_env *shell)
         exit(execute_builtin(cmd, shell));
     path = find_command_path(find_full_path(shell->envp), cmd->argv[0]);
     if (!path)
+    {
+        if (ft_strchr(cmd->argv[0], '/'))
+            exit(exec_error(cmd->argv[0]));
         exit(path_error(cmd));
+    }
     execve(path, cmd->argv, shell->envp);
     free(path);
     exit(127);

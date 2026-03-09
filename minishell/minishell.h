@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:18 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/05 22:30:26 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/09 06:06:46 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <sys/types.h>
-#include <sys/wait.h>   
+#include <sys/wait.h>
+#include <sys/stat.h>
 #include <stdlib.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -64,10 +65,11 @@ typedef struct s_pipes
     int cmds_length;
 }t_pipes;
 
+int exec_error(char *cmd);
 char	*find_command_path(char *path, char *cmd);
 int print_export(t_env *shell);
 int    wait_for_all(t_pipes *pipes);
-int echo_newline(t_cmd *cmd);
+int echo_newline(char *cmd);
 int pipes_cleanup(t_pipes *pipes);
 int chdir_error(char *cmd);
 int    exit_validation(t_cmd *cmd,long exit_c);

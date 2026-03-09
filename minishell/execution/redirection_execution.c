@@ -6,11 +6,11 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 18:25:18 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/04 18:27:44 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/09 06:08:49 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 
 static void    child_execution(t_cmd *cmd, t_env *shell)
@@ -28,7 +28,11 @@ static void    child_execution(t_cmd *cmd, t_env *shell)
     }
     path = find_command_path(find_full_path(shell->envp), cmd->argv[0]);
     if (!path)
-        path_error(cmd);
+    {
+        if (ft_strchr(cmd->argv[0], '/'))
+            exit(exec_error(cmd->argv[0]));
+        exit(path_error(cmd));
+    }
     execve(path, cmd->argv, shell->envp);
     perror("execve");
     free(path);

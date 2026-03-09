@@ -6,11 +6,11 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 06:46:15 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/04 18:22:50 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/09 06:06:51 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 void    perror_exit(char *message,int exit_code)
 {
@@ -42,6 +42,27 @@ int path_error(t_cmd *cmd)
     ft_putstr_fd(cmd->argv[0], 2);
     ft_putstr_fd(": command not found\n", 2);
     return (127);
+}
+int exec_error(char *cmd)
+{
+    struct stat st;
+
+    ft_putstr_fd("minishell: ", 2);
+    ft_putstr_fd(cmd, 2);
+    ft_putstr_fd(": ", 2);
+    if (stat(cmd, &st) == -1)
+    {
+        ft_putstr_fd(strerror(errno), 2);
+        ft_putstr_fd("\n", 2);
+        return (127);
+    }
+    if (S_ISDIR(st.st_mode))
+    {
+        ft_putstr_fd("Is a directory\n", 2);
+        return (126);
+    }
+    ft_putstr_fd("Permission denied\n", 2);
+    return (126);
 }
 int chdir_error(char *cmd)
 {

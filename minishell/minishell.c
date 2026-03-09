@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:04 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/05 21:46:47 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/09 06:06:05 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,8 @@ static void execute_commands(t_env *shell)
         }
         else
         {
+            if (heredocs_with_pipes(cmd) == -1)
+                return;
             status = status_value(cmd,shell);
             if (status != -2)
                 shell->last_exit_status = status;

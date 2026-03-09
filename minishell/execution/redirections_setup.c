@@ -6,11 +6,11 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 18:59:45 by malhassa          #+#    #+#             */
-/*   Updated: 2026/03/04 18:33:45 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/09 06:08:53 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 static void    infile_redirection(t_redir *redir)
 {

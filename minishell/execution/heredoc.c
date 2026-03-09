@@ -6,11 +6,11 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 18:19:24 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/07 03:36:45 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/09 06:08:22 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 static int heredoc_input(t_redir *redir , int fd[2])
 {
@@ -19,7 +19,7 @@ static int heredoc_input(t_redir *redir , int fd[2])
     str = readline("> ");
     if(!str)
         return (0);
-    if (strcmp(str,redir->target) == 0)
+    if (ft_strcmp(str,redir->target) == 0)
     {
         if (str)
             free(str);
@@ -87,6 +87,7 @@ void    heredoc_redirection(t_redir *redir)
     while (1)
         if (!heredoc_input(redir,fd))
             break;
+    close(fd[1]);
     if (dup2(fd[0],0) == -1)
         perror_exit("minishell: dup2",1);
     close(fd[0]);

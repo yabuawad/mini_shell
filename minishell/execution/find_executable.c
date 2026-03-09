@@ -6,11 +6,11 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 15:52:53 by malhassa          #+#    #+#             */
-/*   Updated: 2026/03/05 21:02:17 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/09 06:08:32 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 char	*find_full_path(char *envp[])
 {
 	int	i;
@@ -53,15 +53,22 @@ char	*find_command_path(char *path, char *cmd)
 {
 	char	**str;
 	char	*temp;
+	struct stat	st;
 
 	if (!path || !cmd)
 		return (NULL);
 	if (ft_strchr(cmd, '/'))
 	{
+		if (stat(cmd, &st) == -1)
+			return (NULL);
+		if (S_ISDIR(st.st_mode))
+			return (NULL);
 		if (!access(cmd, X_OK))
 			return (ft_strdup(cmd));
 		return (NULL);
 	}
+	if (!path)
+		return (NULL);
 	str = ft_split(path, ':');
 	if (!str)
 		return (NULL);

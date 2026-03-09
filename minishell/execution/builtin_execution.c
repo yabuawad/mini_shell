@@ -6,11 +6,11 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 19:09:18 by malhassa          #+#    #+#             */
-/*   Updated: 2026/03/07 03:40:38 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/09 06:07:15 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 int execute_cd(t_cmd *cmd, t_env *shell)
 {
@@ -30,6 +30,11 @@ int execute_cd(t_cmd *cmd, t_env *shell)
             return (chdir_error(home));
         return (0);
     }
+    if (cmd->argv[2])
+    {
+        ft_putstr_fd("minishell: cd: too many arguments\n", 2);
+        return (1);
+    }
     if (chdir(cmd->argv[1]) == -1)
         return (chdir_error(cmd->argv[1]));
     return (0);
@@ -42,12 +47,10 @@ int execute_echo(t_cmd *cmd)
     
     i = 1;
     newline = 1;
-    if (cmd->argv[1] && cmd->argv[1][0] == '-' && cmd->argv[1][1] == 'n')
+    while (cmd->argv[i] && echo_newline(cmd->argv[i]))
     {
-        if (!echo_newline(cmd))
-            return (1);
-        i++;
         newline = 0;
+        i++;
     }
     while (cmd->argv[i])
     {
@@ -92,26 +95,30 @@ int execute_env(t_cmd *cmd , t_env *shell)
     }
     return (0);
 }
-
-int execute_exit(t_cmd *cmd,t_env *shell)
+int execute_exit(t_cmd *cmd, t_env *shell)
 {
-    long exit_c; // partically correct, numeric validation is incompete, overflow on long_max not int_max
+    long exit_c;
     
-    exit_c = 0; 
+    exit_c = 0;
+    ft_putendl_fd("exit", 1);
     if (cmd->argv[1])
     {
         exit_c = (long)ft_atoi(cmd->argv[1]);
-        // exit_c = exit_validation(cmd,exit_c);
-        if (exit_c == 0 && cmd->argv[1][0] != '0') // this handles numeric argumeent and long_max overflow
+        if (cmd->argv[2])
         {
-            ft_putstr_fd("exit: '", 2);
+            ft_putstr_fd("exit: ", 2);
+            ft_putendl_fd("too many arguments", 2);
+            return (1);
+        }
+        if (exit_c == 0 && cmd->argv[1][0] != '0')
+        {
+            ft_putstr_fd("exit: ", 2);
             ft_putstr_fd(cmd->argv[1], 2);
-            ft_putstr_fd("': numeric argument required \n", 2);
-            exit(2); // is this correct?
+            ft_putendl_fd(": numeric argument required", 2);
+            exit(2);
         }
     }
     else if (shell)
         exit_c = shell->last_exit_status;
-    exit(exit_c);
-    return (0);
+    exit(exit_c % 256);
 }
