@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 18:19:24 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/09 06:08:22 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/10 07:12:35 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,25 +70,37 @@ int	heredocs_with_pipes(t_cmd *cmd)
     }
     return (1);
 }
-void    heredoc_redirection(t_redir *redir)
+int    heredoc_redirection(t_redir *redir)
 {
     int fd[2];
 
     if (redir->fd != -1)
     {
         if (dup2(redir->fd, 0) == -1)
-            perror_exit("minishell: dup2", 1);
+        {
+            perror("minishell: dup2");
+            close(redir->fd);
+            return (0);
+        }
         close(redir->fd);
         redir->fd = -1;
-        return ;
+        return (1);
     }
     if (pipe(fd) == -1)
-        perror_exit("minishell: pipe",1);
+    {
+        perror("minishell: pipe");
+        return (0);
+    }
     while (1)
         if (!heredoc_input(redir,fd))
             break;
     close(fd[1]);
     if (dup2(fd[0],0) == -1)
-        perror_exit("minishell: dup2",1);
+    {
+        perror("minishell: dup2");
+        close(fd[0]);
+        return (0);
+    }
     close(fd[0]);
+    return (1);
 }

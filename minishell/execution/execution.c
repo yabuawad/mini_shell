@@ -60,5 +60,5 @@ int execute_command(t_cmd *cmd,t_env *shell)
     }
     waitpid(pid,&status,0);
     free(path);
-    return (WEXITSTATUS(status));
+    return (decode_wait_status(status));
 }

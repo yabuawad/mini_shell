@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:04 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/09 06:06:05 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/11 01:34:00 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,9 @@ int status_value(t_cmd *cmd,t_env *shell)
     
     if (cmd -> redirs)
         status = check_redirection(cmd, shell);
-    else if (is_builtin(cmd->argv[0]))
+    else if (is_builtin(cmd->argv[0])) // crash if argv is NULL?
         status = execute_builtin(cmd, shell);
-    else if (!cmd->argv || !cmd->argv[0])
+    else if (!cmd->argv || !cmd->argv[0]) // ?
         status = -2; 
     else
         status = execute_command(cmd, shell);
@@ -101,6 +101,7 @@ int main(int argc, char **argv, char **envp)
         } 
         if (*line)
             add_history(line);   
+        parser_set_last_status(shell.last_exit_status);
         shell.cmd_head = parse_input(line);
         execute_commands(&shell);
         memory_cleanup(line,&shell);

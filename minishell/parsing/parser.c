@@ -3,14 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: malhassa <malhassa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/20 18:00:00 by parser            #+#    #+#             */
-/*   Updated: 2026/03/02 16:17:58 by malhassa         ###   ########.fr       */
+/*   Updated: 2026/03/10 23:32:07 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static int g_last_status = 0;
+
+void parser_set_last_status(int status)
+{
+    g_last_status = status;
+}
 
 typedef struct s_token
 {
@@ -219,6 +226,19 @@ char *extract_word(char *str, int *i)
     return (result);
 }
 
+static char *expand_status(char *word)
+{
+    char    *status;
+
+    if (!word)
+        return (NULL);
+    if (ft_strcmp(word, "$?") != 0)
+        return (word);
+    status = ft_itoa(g_last_status);
+    free(word);
+    return (status);
+}
+
 t_token *tokenize(char *input)
 {
     t_token *tokens;
@@ -280,6 +300,12 @@ t_token *tokenize(char *input)
         {
             // Extract word (handles quotes)
             word = extract_word(input, &i);
+            if (!word)
+            {
+                token_clear(&tokens);
+                return (NULL);
+            }
+            word = expand_status(word);
             if (!word)
             {
                 token_clear(&tokens);

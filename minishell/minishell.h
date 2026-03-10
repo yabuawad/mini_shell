@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:18 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/09 06:06:46 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/11 01:36:17 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <fcntl.h>
 #include <errno.h>
 #include "../libft/libft.h"
@@ -35,8 +36,8 @@ typedef enum e_redir_type
 
 typedef struct s_redir
 {
-    int fd; // -1 default
-    char *target; // name of file
+    int fd;
+    char *target;
     redir_type type;
     struct s_redir *next_redirection;
 }t_redir;
@@ -51,9 +52,9 @@ typedef struct s_cmd
 
 typedef struct s_env
 {
-    char **envp; // i need it for access() and parser needs it for expanding
+    char **envp;
     int last_exit_status;
-    t_cmd   *cmd_head;// the first command in the linked list
+    t_cmd   *cmd_head;
 }t_env;
 
 typedef struct s_pipes
@@ -67,16 +68,20 @@ typedef struct s_pipes
 
 int exec_error(char *cmd);
 char	*find_command_path(char *path, char *cmd);
+int cd_home(t_env *shell);
+int update_pwd(t_env *shell);
+int  env_update(char *cmd, t_env *shell,int j);
+int cd_old_path(t_env *shell);
 int print_export(t_env *shell);
 int    wait_for_all(t_pipes *pipes);
+int decode_wait_status(int status);
 int echo_newline(char *cmd);
-int pipes_cleanup(t_pipes *pipes);
+int pipes_cleanup(t_pipes *pipes, int i);
 int chdir_error(char *cmd);
-int    exit_validation(t_cmd *cmd,long exit_c);
 int path_error(t_cmd *cmd);
 char	*find_full_path(char *envp[]);
 int execute_command(t_cmd *cmd,t_env *shell);
-void    apply_redirections(t_redir *redir);
+int     apply_redirections(t_redir *redir);
 int execute_builtin(t_cmd *cmd, t_env *shell);
 int execute_cd(t_cmd *cmd, t_env *shell);
 int is_builtin(const char *s);
@@ -98,8 +103,9 @@ char    *add_varible(char *str);
 int execute_export(t_cmd *cmd, t_env *shell);
 int execute_unset(t_cmd *cmd, t_env *shell);
 t_cmd *parse_input(char *input);
+void parser_set_last_status(int status);
 void free_commands(t_cmd *cmd);
 void    perror_exit(char *message,int exit_code);
 int	heredocs_with_pipes(t_cmd *cmd);
-void    heredoc_redirection(t_redir *redir);
+int    heredoc_redirection(t_redir *redir);
 #endif

@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/20 16:15:59 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/09 06:07:12 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/10 04:01:58 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,14 +35,15 @@ static char    **new_environment(char **envp, char *cmd)
     return (new_envp);
 }
 
-static int  env_update(t_cmd *cmd, t_env *shell, int i ,int j)
+int  env_update(char *cmd, t_env *shell,int j)
 {
     char **old_envp;
+    char *new_value;
     
     if (j == -1)
     {
         old_envp = shell->envp;
-        shell->envp = new_environment(shell->envp, cmd->argv[i]);
+        shell->envp = new_environment(shell->envp, cmd);
         if (!shell->envp)
         {
             shell->envp = old_envp;
@@ -52,12 +53,13 @@ static int  env_update(t_cmd *cmd, t_env *shell, int i ,int j)
     }
     else
     {
-        if (ft_strchr(cmd->argv[i],'='))
+        if (ft_strchr(cmd,'='))
         {
-            free(shell->envp[j]);
-            shell->envp[j] = ft_strdup(cmd->argv[i]);
-            if (!shell->envp[j])
+            new_value = ft_strdup(cmd);
+            if (!new_value)
                 return (0);
+            free(shell->envp[j]);
+            shell->envp[j] = new_value;
         }
     }
     return (1);
@@ -67,7 +69,7 @@ static int export_validation(char  *cmd)
     int i;
     
     i = 0;
-    if (!cmd[0] || !cmd)
+    if (!cmd || !cmd[0])
         return (export_error(""));
     if (!ft_isalpha(cmd[0]) && cmd[0] != '_')
         return (export_error(cmd));
@@ -97,7 +99,7 @@ int execute_export(t_cmd *cmd, t_env *shell)
         else
         {
             j = envp_search(shell->envp,cmd->argv[i]);
-            if (!env_update(cmd,shell,i,j))
+            if (!env_update(cmd->argv[i],shell,j))
                 return (1);
         }
             i++;

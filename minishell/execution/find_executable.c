@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 15:52:53 by malhassa          #+#    #+#             */
-/*   Updated: 2026/03/09 06:08:32 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/10 23:24:46 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,9 +55,7 @@ char	*find_command_path(char *path, char *cmd)
 	char	*temp;
 	struct stat	st;
 
-	if (!path || !cmd)
-		return (NULL);
-	if (ft_strchr(cmd, '/'))
+	if (cmd && ft_strchr(cmd, '/'))
 	{
 		if (stat(cmd, &st) == -1)
 			return (NULL);
@@ -67,7 +65,7 @@ char	*find_command_path(char *path, char *cmd)
 			return (ft_strdup(cmd));
 		return (NULL);
 	}
-	if (!path)
+	if (!path || !cmd)
 		return (NULL);
 	str = ft_split(path, ':');
 	if (!str)

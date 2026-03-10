@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 01:52:58 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/09 06:08:15 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/11 01:34:55 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,10 @@ static void execute_last_process(t_cmd *cmd, t_env *shell)
     if (!cmd || !cmd->argv || !cmd->argv[0])
         exit(0);
     if (cmd->redirs)
-        apply_redirections(cmd->redirs);
+    {
+        if (!apply_redirections(cmd->redirs))
+            exit(1);
+    }
     if (is_builtin(cmd->argv[0]))
         exit(execute_builtin(cmd, shell));
     path = find_command_path(find_full_path(shell->envp), cmd->argv[0]);
@@ -39,10 +42,10 @@ static int last_process(t_cmd *cmd,t_env *shell, t_pipes *pipes, int i)
     int status;
     
     if (!cmd)
-        return (pipes_cleanup(pipes));
+        return (pipes_cleanup(pipes,i));
     pipes->pids[i] = fork();
     if (pipes->pids[i] < 0)
-        return (pipes_cleanup(pipes));
+        return (pipes_cleanup(pipes,i));
     if (pipes->pids[i] == 0)
     {
         if (pipes->last_read != -1)
@@ -54,13 +57,14 @@ static int last_process(t_cmd *cmd,t_env *shell, t_pipes *pipes, int i)
     if (pipes->last_read != -1)
         close(pipes->last_read);
     status = wait_for_all(pipes);
-    pipes_cleanup(pipes);
+    pipes_cleanup(pipes,0);
     return (status);
 }
 
 static void child_process(t_pipes *pipes,int i ,t_cmd *cmd, t_env *shell)
 {
     char    *path;
+    // dup2 protection missinggngn
     
     if (i > 0)
         dup2(pipes->last_read,0); 
@@ -72,19 +76,23 @@ static void child_process(t_pipes *pipes,int i ,t_cmd *cmd, t_env *shell)
     if (pipes->fd[0] != -1)
         close(pipes->fd[0]);
     if (cmd->redirs)
-        apply_redirections(cmd->redirs);
+    {
+        if (!apply_redirections(cmd->redirs))
+            exit(1);
+    }
     if (!cmd || !cmd->argv || !cmd->argv[0])
         exit(0);
     if (is_builtin(cmd->argv[0]))
         exit(execute_builtin(cmd, shell));
     path = find_command_path(find_full_path(shell->envp), cmd->argv[0]);
-    if (!path)
+    if (!path)  
     {
         if (ft_strchr(cmd->argv[0], '/'))
             exit(exec_error(cmd->argv[0]));
         exit(path_error(cmd));
     }
     execve(path, cmd->argv, shell->envp);
+    perror("execve");
     free(path);
     exit(127);
 }
@@ -116,15 +124,15 @@ int apply_pipe(t_cmd *cmd,t_env *shell)
     int i;
     
     if (!before_execution(cmd,&pipes))
-        return (1); // should i display an error messgae here?
+        return (1);
     i = 0;
     while (cmd && cmd->has_pipe)
     {
         if (pipe(pipes.fd) == -1)
-            return (pipes_cleanup(&pipes));
-        pipes.pids[i] = fork();
+            return (pipes_cleanup(&pipes,i));
+        pipes.pids[i] = fork(); 
         if (pipes.pids[i] < 0)
-            return (pipes_cleanup(&pipes));
+            return (pipes_cleanup(&pipes,i));
         if (pipes.pids[i] == 0)
             child_process(&pipes,i,cmd,shell);
         close(pipes.fd[1]);
