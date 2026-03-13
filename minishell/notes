@@ -1,0 +1,9 @@
+wrong tests : 
+exit 42 > file -> stores "exit" in the file
+ls > test1 > test2 -l > test3 -a
+
+
+missing parts :
+signals - (heredoc signals)
+expander
+shell level
