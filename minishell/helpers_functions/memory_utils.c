@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   additional_functions.c                             :+:      :+:    :+:   */
+/*   memory_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 21:43:19 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/11 01:21:24 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/13 03:47:53 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,6 @@ int ft_2dstrlen(char **str)
     while(str[i])
         i++;
     return (i);
-}
-void print_exit(char *message, int exit_value) 
-{
-    ft_putendl_fd(message, 2);
-    exit(exit_value);
 }
 
 int print_export(t_env *env)

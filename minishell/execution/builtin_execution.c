@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 19:09:18 by malhassa          #+#    #+#             */
-/*   Updated: 2026/03/11 01:36:13 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/13 14:24:12 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,17 +73,12 @@ int execute_env(t_cmd *cmd , t_env *shell)
     int i;
     
     if (cmd->argv[1])
-    {
+    {   
         i = 1;
         while (cmd->argv[i])
         {
             if (ft_strcmp(cmd->argv[i],"env") != 0)
-            {
-                ft_putstr_fd("env: '", 2);
-                ft_putstr_fd(cmd->argv[i], 2);
-                ft_putstr_fd("': No such file or directory\n", 2);
-                return (127);         
-            }
+                return (env_error(cmd->argv[i]));
             i++;
         }
     }
@@ -99,44 +94,6 @@ int execute_env(t_cmd *cmd , t_env *shell)
     }
     return (0);
 }
-static int  parse_exit_value(char *arg, long long *value)
-{
-    int                 i;
-    int                 sign;
-    unsigned long long  result;
-    unsigned long long  limit;
-
-    if (!arg || !*arg)
-        return (0);
-    i = 0;
-    sign = 1;
-    if (arg[i] == '+' || arg[i] == '-')
-    {
-        if (arg[i] == '-')
-            sign = -1;
-        i++;
-    }
-    if (!ft_isdigit(arg[i]))
-        return (0);
-    result = 0;
-    limit = (unsigned long long)LLONG_MAX;
-    if (sign == -1)
-        limit++;
-    while (ft_isdigit(arg[i]))
-    {
-        if (result > (limit - (unsigned long long)(arg[i] - '0')) / 10)
-            return (0);
-        result = result * 10 + (unsigned long long)(arg[i] - '0');
-        i++;
-    }
-    if (arg[i] != '\0')
-        return (0);
-    if (sign == -1 && result == (unsigned long long)LLONG_MAX + 1ULL)
-        *value = LLONG_MIN;
-    else
-        *value = (long long)result * sign;
-    return (1);
-}
 
 int execute_exit(t_cmd *cmd, t_env *shell)
 {
@@ -146,7 +103,7 @@ int execute_exit(t_cmd *cmd, t_env *shell)
     ft_putendl_fd("exit", 1);
     if (cmd->argv[1])
     {
-        if (!parse_exit_value(cmd->argv[1], &exit_c))
+        if (!exit_value_validation(cmd->argv[1], &exit_c))
         {
             ft_putstr_fd("exit: ", 2);
             ft_putstr_fd(cmd->argv[1], 2);

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   execution.c                                        :+:      :+:    :+:   */
+/*   command_execution.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 15:59:52 by malhassa          #+#    #+#             */
-/*   Updated: 2026/03/09 06:07:36 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/13 03:20:15 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,16 +32,20 @@ int execute_builtin(t_cmd *cmd, t_env *shell)
     return (1);
 }
 
-int execute_command(t_cmd *cmd,t_env *shell)
+int run_command(t_cmd *cmd,t_env *shell)
 {
     pid_t pid;
     int status;
     char    *path;
+    char    *full_path;
 
-    path = find_command_path(find_full_path(shell->envp), cmd->argv[0]);
+    full_path = find_full_path(shell->envp);
+    path = find_command_path(full_path, cmd->argv[0]);
     if (!path)
     {
         if (ft_strchr(cmd->argv[0], '/'))
+            return (exec_error(cmd->argv[0]));
+        if (!full_path)
             return (exec_error(cmd->argv[0]));
         return (path_error(cmd));
     }
@@ -52,12 +56,7 @@ int execute_command(t_cmd *cmd,t_env *shell)
         return (1);
     }
     if (pid == 0)
-    {
-        execve(path,cmd->argv,shell->envp);
-        perror("execve");
-        free(path);
-        exit(127);
-    }
+        execve_handler(path,cmd,shell);
     waitpid(pid,&status,0);
     free(path);
     return (decode_wait_status(status));

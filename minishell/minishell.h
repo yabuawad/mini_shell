@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:18 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/11 01:36:17 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/13 14:23:31 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,46 +66,51 @@ typedef struct s_pipes
     int cmds_length;
 }t_pipes;
 
+int get_status(t_cmd *cmd,t_env *shell);
 int exec_error(char *cmd);
 char	*find_command_path(char *path, char *cmd);
 int cd_home(t_env *shell);
 int update_pwd(t_env *shell);
-int  env_update(char *cmd, t_env *shell,int j);
+int env_update(char *cmd, t_env *shell,int j);
 int cd_old_path(t_env *shell);
-int print_export(t_env *shell);
-int    wait_for_all(t_pipes *pipes);
+int print_export(t_env *env);
+int wait_for_all(t_pipes *pipes);
 int decode_wait_status(int status);
 int echo_newline(char *cmd);
 int pipes_cleanup(t_pipes *pipes, int i);
 int chdir_error(char *cmd);
 int path_error(t_cmd *cmd);
 char	*find_full_path(char *envp[]);
-int execute_command(t_cmd *cmd,t_env *shell);
-int     apply_redirections(t_redir *redir);
+int run_command(t_cmd *cmd,t_env *shell);
+void execve_handler(char *path,t_cmd *cmd, t_env *shell);
+int apply_redirections(t_redir *redir);
 int execute_builtin(t_cmd *cmd, t_env *shell);
 int execute_cd(t_cmd *cmd, t_env *shell);
 int is_builtin(const char *s);
+int env_error(char *cmd);
+int setup_fds(int i,t_pipes *pipes);
 int execute_env(t_cmd *cmd , t_env *shell);
+int  exit_value_validation(char *arg, long long *value);
 int execute_pwd(void);
 int execute_echo(t_cmd *cmd);
-void    free_2d(char **array);
+void free_2d(char **array);
 int execute_exit(t_cmd *cmd,t_env *shell);
-int apply_pipe(t_cmd *cmd,t_env *shell);
-int check_redirection(t_cmd *cmd,t_env *shell);
+int apply_pipe(t_cmd **cmd,t_env *shell);
+int execute_with_redirections(t_cmd *cmd,t_env *shell);
 void print_exit(char *message, int exit_value);
 int ft_2dstrlen(char **str);
 char **ft_envdup(char **envp,int is_new);
 int ft_strcmp(char *str,char *str2);
 int envp_search(char **envp, char *name);
-char    *find_envp_value(char **envp, char *name);
+char *find_envp_value(char **envp, char *name);
 int export_error(char *cmd);
-char    *add_varible(char *str);
+char *add_varible(char *str);
 int execute_export(t_cmd *cmd, t_env *shell);
 int execute_unset(t_cmd *cmd, t_env *shell);
 t_cmd *parse_input(char *input);
 void parser_set_last_status(int status);
 void free_commands(t_cmd *cmd);
-void    perror_exit(char *message,int exit_code);
-int	heredocs_with_pipes(t_cmd *cmd);
-int    heredoc_redirection(t_redir *redir);
+void perror_exit(char *message,int exit_code);
+int heredocs_with_pipes(t_cmd *cmd);
+int heredoc_redirection(t_redir *redir);
 #endif

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error_handling.c                                   :+:      :+:    :+:   */
+/*   error_output.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 06:46:15 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/11 01:18:40 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/13 14:50:39 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,14 +62,12 @@ int exec_error(char *cmd)
     {
         ft_putstr_fd(strerror(errno), 2);
         ft_putstr_fd("\n", 2);
-        return (127);
+        return (127); // ?
     }
     if (S_ISDIR(st.st_mode))
-    {
         ft_putstr_fd("Is a directory\n", 2);
-        return (126);
-    }
-    ft_putstr_fd("Permission denied\n", 2);
+    else
+        ft_putstr_fd("Permission denied\n", 2);
     return (126);
 }
 int chdir_error(char *cmd)
@@ -80,4 +78,16 @@ int chdir_error(char *cmd)
     ft_putstr_fd(strerror(errno), 2);
     ft_putstr_fd("\n", 2);
     return (1);
+}
+int env_error(char *cmd)
+{
+    ft_putstr_fd("env: '", 2);
+    ft_putstr_fd(cmd, 2);
+    ft_putstr_fd("': No such file or directory\n", 2);
+    return (127);         
+}
+void print_exit(char *message, int exit_value) 
+{
+    ft_putendl_fd(message, 2);
+    exit(exit_value);
 }

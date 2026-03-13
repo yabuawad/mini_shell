@@ -7,15 +7,16 @@ LDFLAGS		= -lreadline
 
 SRCS		= minishell.c \
 			  execution/builtin_execution.c \
-			  execution/builtin_execution_2.c \
-			  execution/find_executable.c \
-			  execution/execution.c \
+			  execution/builtin_export_unset.c \
+			  execution/path_resolver.c \
+			  execution/command_execution.c \
 			  execution/redirections_setup.c \
-			  execution/heredoc.c \
-			  execution/redirection_execution.c \
-			  helpers_functions/additional_functions.c \
+			  execution/heredoc_processes.c \
+			  execution/file_redirection.c \
+			  helpers_functions/memory_utils.c \
+			  helpers_functions/status_utils.c \
 			  execution/envp_functions.c \
-			  helpers_functions/error_handling.c \
+			  helpers_functions/error_output.c \
 			  execution/pipes_execution.c \
 			  execution/builtin_helpers.c \
 			  parsing/parser.c \

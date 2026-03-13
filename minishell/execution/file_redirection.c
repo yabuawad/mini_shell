@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   redirection_execution.c                            :+:      :+:    :+:   */
+/*   file_redirection.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 18:25:18 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/10 07:03:50 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/13 03:22:22 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ static void    child_execution(t_cmd *cmd, t_env *shell)
 {
     int status;
     char    *path;
+    char    *full_path;
     
     if (!apply_redirections(cmd->redirs))
         exit(1);
@@ -27,10 +28,13 @@ static void    child_execution(t_cmd *cmd, t_env *shell)
         status = execute_builtin(cmd, shell);
         exit(status);
     }
-    path = find_command_path(find_full_path(shell->envp), cmd->argv[0]);
+    full_path = find_full_path(shell->envp);
+    path = find_command_path(full_path, cmd->argv[0]);
     if (!path)
     {
         if (ft_strchr(cmd->argv[0], '/'))
+            exit(exec_error(cmd->argv[0]));
+        if (!full_path)
             exit(exec_error(cmd->argv[0]));
         exit(path_error(cmd));
     }
@@ -68,7 +72,7 @@ static int builtin_with_redirection(t_cmd *cmd, t_env *shell)
     close(old_stdout);
     return (status);
 }
-int check_redirection(t_cmd *cmd,t_env *shell)
+int execute_with_redirections(t_cmd *cmd,t_env *shell)
 {
     int status;
     pid_t pid;

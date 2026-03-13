@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:04 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/11 01:34:00 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/13 14:46:35 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,21 +38,21 @@ static void  memory_cleanup(char *line,t_env *shell)
         free(line);
 }
 
-int status_value(t_cmd *cmd,t_env *shell)
+int get_status(t_cmd *cmd,t_env *shell)
 {
     int status;
     
     if (cmd -> redirs)
-        status = check_redirection(cmd, shell);
-    else if (is_builtin(cmd->argv[0])) // crash if argv is NULL?
-        status = execute_builtin(cmd, shell);
-    else if (!cmd->argv || !cmd->argv[0]) // ?
+        status = execute_with_redirections(cmd, shell);
+    else if (!cmd->argv || !cmd->argv[0])
         status = -2; 
+    else if (is_builtin(cmd->argv[0]))
+        status = execute_builtin(cmd, shell);
     else
-        status = execute_command(cmd, shell);
+        status = run_command(cmd, shell);
     return (status);
 }
-static void execute_commands(t_env *shell)
+static void run_command_list(t_env *shell)
 {
     t_cmd   *cmd;
     int status;
@@ -66,21 +66,18 @@ static void execute_commands(t_env *shell)
         {
             if (heredocs_with_pipes(cmd) == -1)
                 return;
-            shell->last_exit_status = apply_pipe(cmd,shell);
-            while (cmd && cmd->has_pipe)
-                cmd = cmd->next;
-            if (cmd)
-                cmd = cmd -> next;
+            shell->last_exit_status = apply_pipe(&cmd,shell);
         }
         else
         {
             if (heredocs_with_pipes(cmd) == -1)
                 return;
-            status = status_value(cmd,shell);
+            status = get_status(cmd,shell);
             if (status != -2)
                 shell->last_exit_status = status;
-            cmd = cmd->next;
         }
+        if (cmd)
+            cmd = cmd->next;
     }
 }
 
@@ -103,7 +100,7 @@ int main(int argc, char **argv, char **envp)
             add_history(line);   
         parser_set_last_status(shell.last_exit_status);
         shell.cmd_head = parse_input(line);
-        execute_commands(&shell);
+        run_command_list(&shell);
         memory_cleanup(line,&shell);
     }
     free_2d(shell.envp);
