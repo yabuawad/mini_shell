@@ -51,14 +51,13 @@ char **handle_pr(char **str)
         i++;
     }
     tok[x] = NULL;
-    return tok;
+    return (tok);
 }
 
 char **tokenise(char *line)
 {
     char  **seperated;
-    char **tokenised;
-    // char **errorless;    
+    char **tokenised;   
     if(check_quotes(line,'"') < 0 || check_quotes(line,'\'') < 0) //check on unclosed quotes
     {
         fprintf(stderr,"unclosed quotes!!!\n");
@@ -68,13 +67,21 @@ char **tokenise(char *line)
         seperated = sep(line,' ','"');
     else
         seperated = sep(line,' ','\''); // any other case? we pass the single
+    if(!seperated)
+        return NULL;
     tokenised = handle_pr(seperated);
     freearr(seperated);
-    if(handled_errors(tokenised,0,0,0,0))
+    if(!tokenised)
+        return NULL;
+    if (handled_errors(tokenised,0,0,0,0))
         print_split(tokenised);
     else
+    {
         printf("error\n");
-    // freearr(tokenised);
+        freearr(tokenised);
+        return NULL;
+    }
+    // print_split(tokenised);
     return(tokenised);
 }
 

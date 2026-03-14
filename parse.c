@@ -1,7 +1,6 @@
 #include "minishell.h"
 
 // tokens = ["ls","-l","|","grep","h"];
-
 t_cmd *parse(char **tokens,int i,int tmpsize)
 {        
     t_cmd   *head;              
@@ -10,7 +9,7 @@ t_cmd *parse(char **tokens,int i,int tmpsize)
     t_redir *redir_head;
     head = addnode();
     if (!head)
-        return NULL;
+        return NULL;;
     current = head;
     redir_head = NULL;
     t_redir *redtail = NULL;
@@ -36,7 +35,6 @@ t_cmd *parse(char **tokens,int i,int tmpsize)
         i++;
     }
     lastcmd(current,argv_temp,redir_head,tmpsize);
-
     return (head);
 }
 

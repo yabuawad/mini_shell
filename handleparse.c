@@ -1,13 +1,14 @@
 #include"minishell.h"
 
-void fill_argv(t_cmd *cmd,char **tempargv,int tmpsize)
+void fill_argv(t_cmd *cmd, char **tempargv, int tmpsize)
 {
-    int i;
-    
-    i = 0;
-    while(i < tmpsize)
+    int i = 0;
+
+    while (i < tmpsize)
     {
-        cmd->argv[i] = tempargv[i];
+        cmd->argv[i] = ft_strdup(tempargv[i]);
+        if(!cmd->argv[i])
+            return;
         i++;
     }
     cmd->argv[i] = NULL;
@@ -17,7 +18,7 @@ t_cmd *end_cmd(t_cmd *current,int tmpsize,char **argv_temp,t_redir *redir_head)
     current->next= NULL;
     current->argv = malloc(sizeof(char *) * (tmpsize + 1));
     if(!current->argv)
-    return NULL;
+        return NULL;
     fill_argv(current,argv_temp,tmpsize); // to fill current cmd with temp
     current->redirs = redir_head;
     current->next = addnode();
@@ -28,13 +29,13 @@ t_cmd *end_cmd(t_cmd *current,int tmpsize,char **argv_temp,t_redir *redir_head)
 void set_redtype(t_redir *cmdredir,char **tokens,int i)
 {
     if(ft_strncmp(tokens[i],"<<",2) == 0)
-    cmdredir->type = R_HEREDOC;
+        cmdredir->type = R_HEREDOC;
     else if(ft_strncmp(tokens[i],">>",2) == 0)
-    cmdredir->type = R_APPEND;
+        cmdredir->type = R_APPEND;
     else if(ft_strncmp(tokens[i],"<",1) == 0)
-    cmdredir->type = R_IN;
+        cmdredir->type = R_IN;
     else if(ft_strncmp(tokens[i],">",1) == 0)
-    cmdredir->type = R_OUT;
+        cmdredir->type = R_OUT;
 }
 
 void fill_red(t_redir *cmdredir,t_redir **redtail,t_redir **redir_head,char **tokens,int i)
@@ -43,7 +44,7 @@ void fill_red(t_redir *cmdredir,t_redir **redtail,t_redir **redir_head,char **to
         // return NULL;    
     cmdredir->next_redirection = NULL;   
     set_redtype(cmdredir,tokens,i);
-    (cmdredir)->target = tokens[i + 1];
+    (cmdredir)->target = ft_strdup(tokens[i + 1]);
     if(!*redir_head)
     {
         *redir_head = cmdredir;
@@ -52,7 +53,7 @@ void fill_red(t_redir *cmdredir,t_redir **redtail,t_redir **redir_head,char **to
     else
     {
         (*redtail)->next_redirection = cmdredir;
-        *redtail = cmdredir;
+         *redtail = cmdredir;
     }
     // return(*cmdredir);
 }

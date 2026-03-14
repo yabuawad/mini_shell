@@ -52,13 +52,6 @@ typedef struct s_env
     t_cmd   *cmd_head;// the first command in the linked list
 }t_env;
 
-// typedef struct s_token
-// {
-//     char *value;
-//     int     dqt;
-//     int     sqt;
-//     struct s_token *next;
-// }t_token;
 
 char	**sep(char const *s, char c,char quote);
 void print_split(char **arr);
@@ -78,4 +71,10 @@ t_cmd *end_cmd(t_cmd *current,int tmpsize,char **argv_temp,t_redir *redir_head);
 void set_redtype(t_redir *cmdredir,char **tokens,int i);
 void fill_red(t_redir *cmdredir,t_redir **redtail,t_redir **redir_head,char **tokens,int i);
 void lastcmd(t_cmd *current,char **argv_temp,t_redir *redir_head,int tmpsize);
+t_env *expand(t_cmd *cmdlist,char **env);
+int is_varchar(char c);
+int get_length(char *str,int i);
+char *get_var(char *str,int i,char *var);
+char *find_env_val(t_env *myenv,char *var);
 #endif
+
