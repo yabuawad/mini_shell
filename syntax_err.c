@@ -1,6 +1,4 @@
-#include "minishell.h"
-
-                  
+#include "minishell.h"        
 int check_word(char *tokens,int i)
 {
     while(tokens[i] == ' ' && tokens[i])

@@ -1,16 +1,19 @@
 #include "minishell.h"
 
-void replace_var(t_env *myenv,char *var,char **str,size_t var_index)
+void free_var(char *old,char *newstr,char *value)
+{
+    free(old);
+    free(newstr);
+    free(value);
+}
+
+void replace_var(t_env *myenv,char *var,char **str,size_t var_index,size_t j)
 {
     size_t i = 0;
-    size_t j = 0;
-    // int flg = 0;
-    // char *str  = cmdlist->argv[r];
     char *old = *str;
     char *value = find_env_val(myenv,var);
     if(!value)
         value = ft_strdup("");
-    // printf("value ::: %s\n",value);
     char *newstr = malloc(ft_strlen(old)-(ft_strlen(var)+1)+ft_strlen(value) + 1);
     if(!newstr)
     {
@@ -29,21 +32,18 @@ void replace_var(t_env *myenv,char *var,char **str,size_t var_index)
         newstr[i++] = old[n++];
     newstr[i] = '\0';
     *str = ft_strdup(newstr);
-    free(old);
-    free(newstr);
-    free(value);
+    free_var(old,newstr,value);
 
 }
 void expand_this(char **str,t_env *myenv)
 {
     int i;
-    // char *str = cmdlist->argv[r];
+    
     i = 0;
     while((*str)[i])
     {
         if((*str)[i] =='$')
         {
-            // printf("here\n");
             if(i > 0 && (*str)[i - 1] == '\'')
             {
                 i++;
@@ -52,18 +52,17 @@ void expand_this(char **str,t_env *myenv)
             else
             {
                 char *var = malloc(get_length(*str,i)+ 1);
-                printf("length: %d\n",get_length(*str,i));
+                // printf("length: %d\n",get_length(*str,i));
                 if(!var)
                 {
                     free(myenv);
                     return ;
                 }
                 var = get_var(*str,i,var); //PATH
-                printf("ITS :: %s\n",var);
-                replace_var(myenv,var,str,i);
+                // printf("ITS :: %s\n",var);
+                replace_var(myenv,var,str,i,0);
                 free(var);
                 continue;
-                // str = cmdlist->argv[r];
             }   
         }
         i++;
@@ -85,7 +84,7 @@ t_env *expand(t_cmd *cmdlist,char **env)
 {
     t_env *myenv = addenv();
     if(!myenv)
-    return NULL;
+        return NULL;
     myenv->cmd_head = cmdlist;
     myenv->envp = env;
     t_cmd *curnt = cmdlist;

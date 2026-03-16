@@ -12,17 +12,29 @@ char *removeqt(char *str)
     i = 0;
     while(str[i])
     {
-        // if(str[i] == '"' || str[i] == '\'' )
-        // {
-        //     // if(i != 0 && i < ft_strlen(str))
-        //         i++;
-        // }
-        // else        
+        if(str[i] == '"' || str[i] == '\'' )
+        {
+            // if(i != 0 && i < ft_strlen(str))
+                i++;
+        }
+        else        
             quoteless[j++] = str[i++];  
     }
     quoteless[j] = '\0';
     return (quoteless);
 }
+
+void clean_qts(t_cmd *cmdlist)
+{
+    int i;
+
+    i = 0;
+    while(cmdlist->argv[i])
+    {
+        removeqt()
+    }
+}
+
 int check_quotes(char *str,char c)
 {
     int i;
