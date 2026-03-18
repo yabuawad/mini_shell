@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
+/*   By: malhassa <malhassa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:04 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/13 14:46:35 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/18 17:05:29 by malhassa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 static int  initialization(int argc, char **argv, char **envp ,t_env *shell)
 {
     (void)argv;
+  
     if (argc != 1)
     {
         ft_putendl_fd("more than one argument!",2);
@@ -84,10 +85,16 @@ static void run_command_list(t_env *shell)
 int main(int argc, char **argv, char **envp)
 {
     char    *line;
-    t_env   shell;
+    t_env   *shell;
 
-    if (!initialization(argc,argv,envp,&shell))
-        return (0);
+    shell = malloc(sizeof(t_env));
+    if (!shell)
+        return (1);
+    if (!initialization(argc,argv,envp,shell))
+    {
+        free(shell);
+        return (1);
+    }
     while (1)
     {
         line = readline("minishell $ ");
@@ -98,11 +105,10 @@ int main(int argc, char **argv, char **envp)
         } 
         if (*line)
             add_history(line);   
-        parser_set_last_status(shell.last_exit_status);
-        shell.cmd_head = parse_input(line);
-        run_command_list(&shell);
-        memory_cleanup(line,&shell);
+        shell->cmd_head = parse_input(line, shell);
+        run_command_list(shell);
+        memory_cleanup(line,shell);
     }
-    free_2d(shell.envp);
+    free_2d(shell->envp);
     return (0);
 }

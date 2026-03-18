@@ -19,7 +19,15 @@ SRCS		= minishell.c \
 			  helpers_functions/error_output.c \
 			  execution/pipes_execution.c \
 			  execution/builtin_helpers.c \
-			  parsing/parser.c \
+			  parsing/sep.c \
+			  parsing/syntax_err.c \
+			  parsing/tokenise.c \
+			  parsing/handle_stuff.c \
+			  parsing/linkedlist.c \
+			  parsing/handleparse.c \
+			  parsing/parse.c \
+			  parsing/expansion_helpers.c \
+			  parsing/expand.c \
 			  ../libft/ft_atoi.c \
 			  ../libft/ft_bzero.c \
 			  ../libft/ft_calloc.c \
