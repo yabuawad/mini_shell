@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: malhassa <malhassa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:04 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/18 17:05:29 by malhassa         ###   ########.fr       */
+/*   Updated: 2026/03/19 03:57:20 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static void  memory_cleanup(char *line,t_env *shell)
         free(line);
 }
 
-int get_status(t_cmd *cmd,t_env *shell)
+static int get_status(t_cmd *cmd,t_env *shell)
 {
     int status;
     
@@ -85,6 +85,8 @@ static void run_command_list(t_env *shell)
 int main(int argc, char **argv, char **envp)
 {
     char    *line;
+    char    **tokens;
+    t_env   *expanded;
     t_env   *shell;
 
     shell = malloc(sizeof(t_env));
@@ -105,7 +107,20 @@ int main(int argc, char **argv, char **envp)
         } 
         if (*line)
             add_history(line);   
-        shell->cmd_head = parse_input(line, shell);
+        tokens = tokenise(line);
+        if (!tokens)
+        {
+            free(line);
+            continue;
+        }
+        shell->cmd_head = parse(tokens, 0, 0);
+        freearr(tokens);
+        if (shell->cmd_head)
+        {
+            expanded = expand(shell->cmd_head, shell->envp);
+            if (expanded)
+                free(expanded);
+        }
         run_command_list(shell);
         memory_cleanup(line,shell);
     }

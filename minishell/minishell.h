@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: malhassa <malhassa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:18 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/18 16:45:25 by malhassa         ###   ########.fr       */
+/*   Updated: 2026/03/19 03:57:10 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ typedef struct s_pipes
     int cmds_length;
 }t_pipes;
 
-int get_status(t_cmd *cmd,t_env *shell);
 int exec_error(char *cmd);
 char	*find_command_path(char *path, char *cmd);
 int cd_home(t_env *shell);
@@ -107,7 +106,6 @@ int export_error(char *cmd);
 char *add_varible(char *str);
 int execute_export(t_cmd *cmd, t_env *shell);
 int execute_unset(t_cmd *cmd, t_env *shell);
-t_cmd *parse_input(char *input, t_env *shell);
 void parser_set_last_status(int status);
 void free_commands(t_cmd *cmd);
 void perror_exit(char *message,int exit_code);

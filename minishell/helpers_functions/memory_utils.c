@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   memory_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: malhassa <malhassa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 21:43:19 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/18 17:05:49 by malhassa         ###   ########.fr       */
+/*   Updated: 2026/03/19 02:56:47 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,4 +116,54 @@ int ft_strcmp(char *str,char *str2)
     while (str[i] && str2[i] && str[i] == str2[i])
         i++;
     return ((unsigned char)str[i] - (unsigned char)str2[i]);
+}
+
+static void free_redirections(t_redir *redirs)
+{
+    t_redir *current;
+    t_redir *temp;
+
+    current = redirs;
+    while (current)
+    {
+        temp = current->next_redirection;
+		if (current->fd != -1)
+			close(current->fd);
+        if (current->target)
+            free(current->target);
+        free(current);
+        current = temp;
+    }
+}
+
+static void free_argv(char **argv)
+{
+    int i;
+
+    if (!argv)
+        return;
+    i = 0;
+    while (argv[i])
+    {
+        free(argv[i]);
+        i++;
+    }
+    free(argv);
+}
+void free_commands(t_cmd *cmd)
+{
+    t_cmd *current;
+    t_cmd *temp;
+
+    current = cmd;
+    while (current)
+    {
+        temp = current->next;
+        if (current->argv)
+            free_argv(current->argv);
+        if (current->redirs)
+            free_redirections(current->redirs);
+        free(current);
+        current = temp;
+    }
 }

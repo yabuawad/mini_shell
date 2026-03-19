@@ -27,18 +27,19 @@ t_redir	*addredir(void)
 
 void print_argv(char **argv)	
 {
-    int i = 0;
+
+    // int i = 0;
 
     if (!argv)
     {
-        printf("    argv: (null)\n");
+    //     printf("    argv: (null)\n");
         return;
     }
-    while (argv[i])
-    {
-        printf("    argv[%d]: [%s]\n", i, argv[i]);
-        i++;
-    }
+    // while (argv[i])
+    // {
+    //     printf("    argv[%d]: [%s]\n", i, argv[i]);
+    //     i++;
+    // }
 }
 
 void print_redirs(t_redir *redir)
