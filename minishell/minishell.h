@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
+/*   By: malhassa <malhassa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:18 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/19 03:57:10 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/24 22:23:58 by malhassa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ int is_builtin(const char *s);
 int env_error(char *cmd);
 int setup_fds(int i,t_pipes *pipes);
 int execute_env(t_cmd *cmd , t_env *shell);
-int  exit_value_validation(char *arg, long long *value);
+int  exit_value_validation(char *arg);
 int execute_pwd(void);
 int execute_echo(t_cmd *cmd);
 void free_2d(char **array);

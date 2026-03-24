@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   command_execution.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
+/*   By: malhassa <malhassa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 15:59:52 by malhassa          #+#    #+#             */
-/*   Updated: 2026/03/13 03:20:15 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/24 22:08:41 by malhassa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
 int execute_builtin(t_cmd *cmd, t_env *shell)
 {
     if (!cmd || !cmd->argv || !cmd->argv[0])

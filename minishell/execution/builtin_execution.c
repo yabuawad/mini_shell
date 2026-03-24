@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_execution.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
+/*   By: malhassa <malhassa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 19:09:18 by malhassa          #+#    #+#             */
-/*   Updated: 2026/03/13 14:24:12 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/24 22:23:34 by malhassa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+#include <readline/readline.h>
 
 int execute_cd(t_cmd *cmd, t_env *shell)
 {
@@ -94,16 +95,29 @@ int execute_env(t_cmd *cmd , t_env *shell)
     }
     return (0);
 }
+int is_zero(char *num)
+{
+    int i;
 
+    i = 0;
+    while (num[i])
+    {
+        if (num[i] != '0')
+            return (0);
+        i++;
+    }
+    return (1);
+}
 int execute_exit(t_cmd *cmd, t_env *shell)
 {
-    long long   exit_c;
+    int   exit_c;
     
     exit_c = 0;
     ft_putendl_fd("exit", 1);
     if (cmd->argv[1])
     {
-        if (!exit_value_validation(cmd->argv[1], &exit_c))
+        exit_c = exit_value_validation(cmd->argv[1]);
+        if (!exit_c && !is_zero(cmd->argv[1]))
         {
             ft_putstr_fd("exit: ", 2);
             ft_putstr_fd(cmd->argv[1], 2);

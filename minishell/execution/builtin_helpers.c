@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_helpers.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
+/*   By: malhassa <malhassa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 22:15:14 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/13 14:57:19 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/24 22:44:00 by malhassa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+#include <limits.h>
 
 int echo_newline(char *cmd)
 {
@@ -27,35 +28,29 @@ int echo_newline(char *cmd)
     }
     return (1);
 }
-int update_pwd(t_env *shell)
+static void    update_variable(t_env *shell, char *variable, char *path)
 {
     int j;
+    char    *full;
+    
+    full = ft_strjoin(variable,path);
+    if (full)
+    {
+        j = envp_search(shell->envp, variable);
+        env_update(full,shell,j);
+        free(full);
+    }
+}
+int update_pwd(t_env *shell)
+{
     char    *old_path;
     char    new_path[4096];
-    char    *full_old;
-    char    *full_new;
     
     old_path = find_envp_value(shell->envp, "PWD");
     if (old_path)
-    { 
-        full_old = ft_strjoin("OLDPWD=", old_path);
-        if (full_old)
-        {
-            j = envp_search(shell->envp,"OLDPWD");
-            env_update(full_old, shell, j);
-            free(full_old);
-        }
-    }
+        update_variable(shell,"OLDPWD",old_path);
     if (getcwd(new_path, sizeof(new_path)) != NULL)
-    {
-        full_new = ft_strjoin("PWD=", new_path);
-        if (full_new)
-        {
-            j = envp_search(shell->envp,"PWD");
-            env_update(full_new, shell, j);
-            free(full_new);
-        }
-    }
+        update_variable(shell,"PWD",new_path);
     else
         ft_putstr_fd("cd: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory\n",2);
     return (1);
@@ -90,20 +85,21 @@ int cd_old_path(t_env *shell)
         return (chdir_error(prv_pwd));
     ft_putendl_fd(prv_pwd, 1);
     if (!update_pwd(shell))
-        return (1);
+        return (1); 
     return (0);
 }
-int  exit_value_validation(char *arg, long long *value)
+int  exit_value_validation(char *arg)
 {
     int                 i;
     int                 sign;
-    unsigned long long  result;
-    unsigned long long  limit;
+    long long  result;
 
-    if (!arg || !*arg)
+    if (!*arg || !arg)
         return (0);
     i = 0;
     sign = 1;
+    while (arg[i] == ' ' || (arg[i] >= 9 && arg[i] <= 13))
+        i++;
     if (arg[i] == '+' || arg[i] == '-')
     {
         if (arg[i] == '-')
@@ -113,22 +109,10 @@ int  exit_value_validation(char *arg, long long *value)
     if (!ft_isdigit(arg[i]))
         return (0);
     result = 0;
-    limit = (unsigned long long)LLONG_MAX;
-    if (sign == -1)
-        limit++;
     while (ft_isdigit(arg[i]))
     {
-        if (result > (limit - (unsigned long long)(arg[i] - '0')) / 10)
-            return (0);
-        result = result * 10 + (unsigned long long)(arg[i] - '0');
+        result = result * 10 + (arg[i] - '0');
         i++;
     }
-    if (arg[i] != '\0')
-        return (0);
-    if (sign == -1 && result == (unsigned long long)LLONG_MAX + 1ULL)
-        *value = LLONG_MIN;
-    else
-        *value = (long long)result * sign;
-    return (1);
+    return (result * sign);
 }
-
