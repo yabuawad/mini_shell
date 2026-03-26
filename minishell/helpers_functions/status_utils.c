@@ -1,0 +1,71 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   status_utils.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/03/12 16:20:08 by mohamed           #+#    #+#             */
+/*   Updated: 2026/03/19 23:09:25 by mohamed          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../minishell.h"
+
+void    execve_handler(char *path,t_cmd *cmd, t_env *shell)
+{
+    execve(path, cmd->argv, shell->envp);
+    perror("execve");
+    free(path);
+    exit(127);
+}
+int    setup_fds(int i,t_pipes *pipes)
+{
+    if (i > 0)
+    {
+        if (dup2(pipes->last_read,0) == -1)
+        {
+            perror("minishell: dup2");
+            return (-1); 
+        }
+    }
+    if (dup2(pipes->fd[1],1) == -1)
+    {
+        perror("minishell: dup2");
+        return (-1);
+    }
+    if (pipes->last_read != -1)
+        close(pipes->last_read);
+    if (pipes->fd[1] != -1)
+        close(pipes->fd[1]);
+    if (pipes->fd[0] != -1)
+        close(pipes->fd[0]);
+    return (1);
+}
+
+int decode_wait_status(int status)
+{
+    if (WIFEXITED(status))
+        return (WEXITSTATUS(status));
+    if (WIFSIGNALED(status))
+        return (128 + WTERMSIG(status));
+    return (1);
+}
+
+int    wait_for_all(t_pipes *pipes)
+{
+    int status;
+    int i;
+    int last_status;
+
+    i = 0;
+    last_status = 0;
+    while(i < pipes->cmds_length)
+    {
+        waitpid(pipes->pids[i],&status,0);
+        if (i == pipes->cmds_length - 1)
+            last_status = status;
+        i++;
+    }
+    return (decode_wait_status(last_status));
+}

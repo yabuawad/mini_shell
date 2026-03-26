@@ -1,0 +1,76 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   additional_files.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/03/19 23:09:03 by mohamed           #+#    #+#             */
+/*   Updated: 2026/03/19 23:09:10 by mohamed          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "minishell.h"
+int ft_2dstrlen(char **str)
+{
+    int i;
+
+    i = 0;
+    while(str[i])
+        i++;
+    return (i);
+}
+
+int print_export(t_env *env)
+{
+    int i;
+    char    *has_value;
+    int len;
+    
+    len = 0;
+    i = 0;
+    while (env->envp[i])
+    {
+        has_value = ft_strchr(env->envp[i],'=');
+        if (has_value)
+        {
+            len = has_value - env->envp[i];
+            ft_putstr("declare -x ");
+            write(1,env->envp[i],len);
+            write(1,"=\"",2);
+            write(1,has_value + 1,ft_strlen(has_value + 1));
+            write(1,"\"",1);
+            write(1,"\n",1);
+        }
+        else
+        {
+            ft_putstr("declare -x ");
+            write(1, env->envp[i], ft_strlen(env->envp[i]));
+            write(1, "\n", 1);
+        }
+        i++;  
+    }
+    return (0);
+}
+int is_builtin(const char *s)
+{
+    if (!s || !*s)
+        return (0);
+    return (ft_strcmp((char *)s, "echo") == 0
+        ||  ft_strcmp((char *)s, "cd") == 0
+        ||  ft_strcmp((char *)s, "pwd") == 0
+        ||  ft_strcmp((char *)s, "export") == 0
+        ||  ft_strcmp((char *)s, "unset") == 0
+        ||  ft_strcmp((char *)s, "env") == 0
+        ||  ft_strcmp((char *)s, "exit") == 0);
+}
+
+int ft_strcmp(char *str,char *str2)
+{
+    int i;
+
+    i = 0;
+    while (str[i] && str2[i] && str[i] == str2[i])
+        i++;
+    return ((unsigned char)str[i] - (unsigned char)str2[i]);
+}
