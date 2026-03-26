@@ -13,17 +13,19 @@ void fill_argv(t_cmd *cmd, char **tempargv, int tmpsize)
     }
     cmd->argv[i] = NULL;
 }
-t_cmd *end_cmd(t_cmd *current,int tmpsize,char **argv_temp,t_redir *redir_head)
+t_cmd *end_cmd(t_parse **parse,char **argv_temp)
 {
-    current->next= NULL;
-    current->argv = malloc(sizeof(char *) * (tmpsize + 1));
-    if(!current->argv)
+    (*parse)->current->next= NULL;
+    (*parse)->current->argv = malloc(sizeof(char *) * ((*parse)->tmpsize + 1));
+    if(!(*parse)->current->argv)
         return NULL;
-    fill_argv(current,argv_temp,tmpsize); // to fill current cmd with temp
-    current->redirs = redir_head;
-    current->next = addnode();
-    current = current->next;
-    return (current);
+    fill_argv((*parse)->current,argv_temp,(*parse)->tmpsize); // to fill (*parse)->current cmd with temp
+    (*parse)->current->redirs = (*parse)->redir_head;
+    (*parse)->current->next = addnode();
+    if (!(*parse)->current->next)
+        return (NULL);
+    (*parse)->current = (*parse)->current->next;
+    return ((*parse)->current);
 }
 
 void set_redtype(t_redir *cmdredir,char **tokens,int i)
@@ -41,7 +43,7 @@ void set_redtype(t_redir *cmdredir,char **tokens,int i)
 void fill_red(t_redir *cmdredir,t_redir **redtail,t_redir **redir_head,char **tokens,int i)
 {
     // if(!cmdredir)
-        // return NULL;    
+    //     return NULL;    
     cmdredir->next_redirection = NULL;   
     set_redtype(cmdredir,tokens,i);
     (cmdredir)->target = ft_strdup(tokens[i + 1]);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   command_execution.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
+/*   By: malhassa <malhassa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 15:59:52 by malhassa          #+#    #+#             */
-/*   Updated: 2026/03/19 22:58:07 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/26 14:28:29 by malhassa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ int execute_builtin(t_cmd *cmd, t_env *shell)
 }
 static  int fork_error()
 {
-        perror("minishell: fork\n");
-        return (1);
+    perror("minishell: fork\n");
+    return (1);
 }
 int run_command(t_cmd *cmd,t_env *shell)
 {

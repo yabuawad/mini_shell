@@ -116,4 +116,3 @@ void print_split(char **arr)
     }
     printf("----\n");
 }
-

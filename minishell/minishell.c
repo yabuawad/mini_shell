@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
+/*   By: malhassa <malhassa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:04 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/20 05:59:45 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/26 15:50:42 by malhassa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ int main(int argc, char **argv, char **envp)
             free(line);
             continue;
         }
-        shell->cmd_head = parse(tokens, 0, 0);
+        shell->cmd_head = parse(tokens);
         freearr(tokens);
         if (shell->cmd_head)
         {

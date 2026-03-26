@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   error_output2.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
+/*   By: malhassa <malhassa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 23:07:14 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/19 23:07:58 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/26 14:30:02 by malhassa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h" 
+#include "../minishell.h"
 
 int chdir_error(char *cmd)
 {

@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   additional_files.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
+/*   By: malhassa <malhassa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 23:09:03 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/19 23:09:10 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/26 14:29:55 by malhassa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 int ft_2dstrlen(char **str)
 {
     int i;

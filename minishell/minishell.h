@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
+/*   By: malhassa <malhassa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:18 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/20 05:59:45 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/26 15:46:57 by malhassa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,16 @@ typedef struct s_pipes
     int cmds_length;
 }t_pipes;
 
+typedef struct s_parse
+{
+    int tmpsize;
+    t_cmd	*head;
+	t_cmd	*current;
+	t_redir	*redir_head;
+	t_redir	*redtail;
+	t_redir	*cmdredir;
+} t_parse;
+
 int exec_error(char *cmd);
 char	*find_command_path(char *path, char *cmd);
 int cd_home(t_env *shell);
@@ -119,14 +129,14 @@ char	**freearr(char **ptr);
 char **tokenise(char *line);
 char *removeqt(char *str);
 int handled_errors(char **tokens,int i,int j,int dqt,int sqt);
-t_cmd *parse(char **tokens,int i,int tmpsize);
+t_cmd *parse(char **tokens);
 t_cmd	*addnode(void);
 t_redir	*addredir(void);
 void print_argv(char **argv);
 void print_cmdlist(t_cmd *cmd);
 void print_redirs(t_redir *redir);
 void fill_argv(t_cmd *cmd,char **tempargv,int tmpsize);
-t_cmd *end_cmd(t_cmd *current,int tmpsize,char **argv_temp,t_redir *redir_head);
+t_cmd *end_cmd(t_parse **parse,char **argv_temp);
 void set_redtype(t_redir *cmdredir,char **tokens,int i);
 void fill_red(t_redir *cmdredir,t_redir **redtail,t_redir **redir_head,char **tokens,int i);
 void lastcmd(t_cmd *current,char **argv_temp,t_redir *redir_head,int tmpsize);

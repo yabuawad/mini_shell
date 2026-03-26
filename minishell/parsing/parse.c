@@ -1,54 +1,57 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   parse.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/19 13:30:00 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/19 03:54:35 by mohamed          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
 
-t_cmd	*parse(char **tokens, int i, int tmpsize)
+static void	parser_helper(char **tokens, t_parse **parse,
+					char *argv_temp[1024])
 {
-	t_cmd	*head;
-	t_cmd	*current;
-	t_redir	*redir_head;
-	t_redir	*redtail;
-	t_redir	*cmdredir;
-	char	*argv_temp[1024];
+    int i;
 
-	head = addnode();
-	if (!head)
-		return (NULL);
-	current = head;
-	redir_head = NULL;
-	redtail = NULL;
-	while (tokens[i])
+    i = 0;
+    while (tokens[i])
+    {
+        if (ft_strncmp(tokens[i], "|", 1) == 0)
+        {
+            argv_temp[(*parse)->tmpsize] = NULL;
+            (*parse)->current->has_pipe = 1;
+            (*parse)->current = end_cmd(parse, argv_temp);
+            (*parse)->tmpsize = 0;
+            (*parse)->redir_head = NULL;
+            i++;
+        }
+        else if (ft_strncmp(tokens[i], "<", 1) == 0 || ft_strncmp(tokens[i], ">", 1) == 0)
+        {
+            (*parse)->cmdredir = addredir();
+            fill_red((*parse)->cmdredir, &(*parse)->redtail, &(*parse)->redir_head, tokens, i);
+            i += 2;
+        }
+        else
+			argv_temp[((*parse)->tmpsize)++] = tokens[i++];
+    }
+}
+
+t_cmd *parse(char **tokens)
+{
+    t_parse *parse; 
+    char    *argv_temp[1024];
+    t_cmd	*head;
+
+    parse = malloc(sizeof(t_parse));
+    if (!parse)
+        return (NULL);
+    parse->tmpsize = 0;
+    parse->head = addnode();
+    if (!parse->head) 
 	{
-		if (ft_strncmp(tokens[i], "|", 1) == 0)
-		{
-			current->has_pipe = 1;
-			current = end_cmd(current, tmpsize, argv_temp, redir_head);
-			tmpsize = 0;
-			redir_head = NULL;
-			i++;
-		}
-		else if (ft_strncmp(tokens[i], "<", 1) == 0
-			|| ft_strncmp(tokens[i], ">", 1) == 0)
-		{
-			cmdredir = addredir();
-			if (!cmdredir)
-				return (head);
-			fill_red(cmdredir, &redtail, &redir_head, tokens, i);
-			i += 2;
-		}
-		else
-			argv_temp[tmpsize++] = tokens[i++];
+		free(parse);
+		return (NULL);
 	}
-	lastcmd(current, argv_temp, redir_head, tmpsize);
-	return (head);
+    parse->current = parse->head;
+    parse->redir_head = NULL;
+    parse->cmdredir = NULL;
+    parse->redtail = NULL;
+    parser_helper(tokens, &parse, argv_temp);    
+    argv_temp[parse->tmpsize] = NULL;
+    lastcmd(parse->current, argv_temp, parse->redir_head, parse->tmpsize);
+    head = parse->head;
+    free(parse);
+    return (head);
 }
