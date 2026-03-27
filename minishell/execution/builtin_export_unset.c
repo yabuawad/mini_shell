@@ -105,15 +105,44 @@ int execute_export(t_cmd *cmd, t_env *shell)
     return (had_error);
 }
 
+static int  unset_validation(char *cmd)
+{
+    int i;
+
+    if (!cmd || !cmd[0])
+        return (1);
+    if (!ft_isalpha(cmd[0]) && cmd[0] != '_')
+        return (1);
+    i = 1;
+    while (cmd[i])
+    {
+        if (!ft_isalnum(cmd[i]) && cmd[i] != '_')
+            return (1);
+        i++;
+    }
+    return (0);
+}
+
 int execute_unset(t_cmd *cmd, t_env *shell)
 {
     int i;
     int index;
     int j;
+    int had_error;
     
     i = 1;
+    had_error = 0;
     while (cmd->argv[i])
     {
+        if (unset_validation(cmd->argv[i]))
+        {
+            ft_putstr_fd("minishell: unset: ", 2);
+            ft_putstr_fd(cmd->argv[i], 2);
+            ft_putendl_fd(": not a valid identifier", 2);
+            had_error = 1;
+            i++;
+            continue;
+        }
         index = envp_search(shell->envp, cmd->argv[i]);
         if (index != -1)
         {
@@ -127,5 +156,5 @@ int execute_unset(t_cmd *cmd, t_env *shell)
         }
         i++;
     }
-    return (0);
+    return (had_error);
 }

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   heredoc.c                                          :+:      :+:    :+:   */
+/*   heredoc_processes.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 18:19:24 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/13 03:10:48 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/27 16:37:29 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,12 @@ static int heredoc_input(t_redir *redir , int fd[2])
     char    *str;
 
     str = readline("> ");
+    if (global_signal == SIGINT)
+    {
+        if (str)
+            free(str);
+        return (-1);
+    }
     if(!str)
         return (0);
     if (ft_strcmp(str,redir->target) == 0)
@@ -33,20 +39,28 @@ static int heredoc_input(t_redir *redir , int fd[2])
 int	heredoc_fds(t_redir *redir)
 {
     int		fd[2];
+    int     ret;
     
     if (pipe(fd) == -1)
         return (-1);
+    global_signal = 0;
     while (1)
     {
-        if (!heredoc_input(redir,fd))
+        ret = heredoc_input(redir,fd);
+        if (ret <= 0)
             break;
     }
     close(fd[1]);
+    if (ret == -1)
+    {
+        close(fd[0]);
+        return (-1);
+    }
     redir->fd = fd[0];
     return (1);
 }
 
-int	heredocs_with_pipes(t_cmd *cmd)
+int	heredocs_with_pipes(t_cmd *cmd, t_env **shell)
 {
     t_cmd	*temp;
     t_redir	*temp_redir;
@@ -60,7 +74,10 @@ int	heredocs_with_pipes(t_cmd *cmd)
             if (temp_redir->type == R_HEREDOC && temp_redir->fd == -1) 
             {
                 if (heredoc_fds(temp_redir) == -1)
+                {
+                    (*shell)->last_exit_status = 130;
                     return (-1);
+                }
             }
             temp_redir = temp_redir->next_redirection;
         }

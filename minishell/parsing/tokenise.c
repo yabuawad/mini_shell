@@ -62,7 +62,7 @@ char **tokenise(char *line)
     {
         fprintf(stderr,"unclosed quotes!!!\n");
         return NULL;
-    }
+    } 
     if(check_quotes(line,'"') > 0)  //if quotes are double you pass the double
         seperated = sep(line,' ','"');
     else
@@ -74,7 +74,7 @@ char **tokenise(char *line)
     if(!tokenised)
         return NULL;
     if (handled_errors(tokenised,0,0,0,0))
-        print_split(tokenised);
+        ; // print_split(tokenised);
     else
     {
         printf("error\n");

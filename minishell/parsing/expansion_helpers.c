@@ -8,6 +8,8 @@ int is_varchar(char c)
 int get_length(char *str,int i)
 {
     int counter = 0;
+    if (str[i + 1] == '?') // 
+        return (1);    //
     if(i > 0 && str[i - 1] == '"')
     {
         i++;
@@ -34,6 +36,12 @@ char *get_var(char *str,int i,char *var)
     int j;
 
     j = 0;
+    if (str[i + 1] == '?') // 
+    {//
+        var[0] = '?';//
+        var[1] = '\0';//
+        return (var);//
+    }
     if(i > 0 && str[i - 1] == '"')
     {
         i++;
@@ -52,15 +60,19 @@ char *get_var(char *str,int i,char *var)
 char *find_env_val(t_env *myenv,char *var)
 {
     int i;
-    char *val = NULL;
+    char *val;
+    int j;
+
+    val = NULL;
+    if (var && var[0] == '?' && var[1] == '\0') // 
+        return (ft_itoa(myenv->last_exit_status));//
     i = 0;
     while(myenv->envp[i])
     {
-        // char *value;
         if(ft_strncmp(var,myenv->envp[i],ft_strlen(var)) == 0 
             && myenv->envp[i][ft_strlen(var)] == '=')
         {
-            int j = 0;
+            j = 0;
             while(myenv->envp[i][j] != '=')
                 j++;
             val = ft_strdup(myenv->envp[i] + j + 1);

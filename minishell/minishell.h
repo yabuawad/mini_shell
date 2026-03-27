@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: malhassa <malhassa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:18 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/26 15:46:57 by malhassa         ###   ########.fr       */
+/*   Updated: 2026/03/27 16:32:23 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <signal.h>
 #include <fcntl.h>
 #include <errno.h>
 #include "../libft/libft.h"
@@ -76,6 +77,8 @@ typedef struct s_parse
 	t_redir	*cmdredir;
 } t_parse;
 
+extern int	global_signal;
+
 int exec_error(char *cmd);
 char	*find_command_path(char *path, char *cmd);
 int cd_home(t_env *shell);
@@ -86,6 +89,7 @@ int print_export(t_env *env);
 int wait_for_all(t_pipes *pipes);
 int decode_wait_status(int status);
 int echo_newline(char *cmd);
+int    apply_parse(char *line, t_env *shell);
 int pipes_cleanup(t_pipes *pipes, int i);
 int chdir_error(char *cmd);
 int path_error(t_cmd *cmd);
@@ -98,6 +102,7 @@ int execute_cd(t_cmd *cmd, t_env *shell);
 int is_builtin(const char *s);
 int env_error(char *cmd);
 int setup_fds(int i,t_pipes *pipes);
+void  memory_cleanup(char *line,t_env *shell);
 int execute_env(t_cmd *cmd , t_env *shell);
 int  exit_value_validation(char *arg);
 int execute_pwd(void);
@@ -116,10 +121,12 @@ int export_error(char *cmd);
 char *add_varible(char *str);
 int execute_export(t_cmd *cmd, t_env *shell);
 int execute_unset(t_cmd *cmd, t_env *shell);
+void sigint_handler(int sig);
+void init_signals(void);
 void parser_set_last_status(int status);
 void free_commands(t_cmd *cmd);
 void perror_exit(char *message,int exit_code);
-int heredocs_with_pipes(t_cmd *cmd);
+int heredocs_with_pipes(t_cmd *cmd,t_env **shell);
 int heredoc_redirection(t_redir *redir);
 //parsing 
 char	**sep(char const *s, char c,char quote);
@@ -140,7 +147,7 @@ t_cmd *end_cmd(t_parse **parse,char **argv_temp);
 void set_redtype(t_redir *cmdredir,char **tokens,int i);
 void fill_red(t_redir *cmdredir,t_redir **redtail,t_redir **redir_head,char **tokens,int i);
 void lastcmd(t_cmd *current,char **argv_temp,t_redir *redir_head,int tmpsize);
-t_env *expand(t_cmd *cmdlist,char **env);
+t_env *expand(t_cmd *cmdlist,char **env, int last_exit_status);
 int is_varchar(char c);
 int get_length(char *str,int i);
 char *get_var(char *str,int i,char *var);

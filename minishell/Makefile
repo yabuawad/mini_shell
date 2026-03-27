@@ -31,6 +31,8 @@ SRCS		= minishell.c \
 			  parsing/parse.c \
 			  parsing/expansion_helpers.c \
 			  parsing/expand.c \
+			  parsing/parse_process.c \
+			  signals/signals.c \
 			  ../libft/ft_atoi.c \
 			  ../libft/ft_bzero.c \
 			  ../libft/ft_calloc.c \

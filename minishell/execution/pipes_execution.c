@@ -49,6 +49,8 @@ static int final_process(t_cmd *cmd,t_env *shell, t_pipes *pipes, int i)
         return (pipes_cleanup(pipes,i));
     if (pipes->pids[i] == 0)
     {
+        signal(SIGINT, SIG_DFL);
+        signal(SIGQUIT, SIG_DFL);
         if (pipes->last_read != -1)
         {
             if (dup2(pipes->last_read,0) == -1)
@@ -74,6 +76,8 @@ static void piped_command(t_pipes *pipes,int i ,t_cmd *cmd, t_env *shell)
     char    *path;
     char    *full_path;
 
+    signal(SIGINT, SIG_DFL);
+    signal(SIGQUIT, SIG_DFL);
     if (setup_fds(i,pipes) == -1)
         exit(1);
     if (cmd->redirs)
@@ -126,6 +130,8 @@ int apply_pipe(t_cmd **cmd,t_env *shell)
     
     if (!before_execution((*cmd),&pipes))
         return (1);
+    signal(SIGINT, SIG_IGN);
+    signal(SIGQUIT, SIG_IGN);
     i = 0;
     while ((*cmd) && (*cmd)->has_pipe)
     {
@@ -144,6 +150,7 @@ int apply_pipe(t_cmd **cmd,t_env *shell)
         i++;
     }
     status = final_process((*cmd),shell,&pipes,i);
+    init_signals();
     return (status);
 }
 

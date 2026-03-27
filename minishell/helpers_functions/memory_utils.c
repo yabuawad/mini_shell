@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 21:43:19 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/19 23:08:50 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/27 14:34:04 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,4 +76,11 @@ void free_commands(t_cmd *cmd)
         free(current);
         current = temp;
     }
+}
+void  memory_cleanup(char *line,t_env *shell)
+{
+    if (shell->cmd_head)
+            free_commands(shell->cmd_head);
+        shell->cmd_head = NULL;
+        free(line);
 }

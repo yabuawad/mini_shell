@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: malhassa <malhassa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:04 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/26 15:50:42 by malhassa         ###   ########.fr       */
+/*   Updated: 2026/03/27 15:45:37 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,6 @@ static int  initialization(int argc, char **argv, char **envp ,t_env *shell)
     shell->last_exit_status = 0;
     shell->cmd_head = NULL;
     return (1);
-}
-static void  memory_cleanup(char *line,t_env *shell)
-{
-    if (shell->cmd_head)
-            free_commands(shell->cmd_head);
-        shell->cmd_head = NULL;
-        free(line);
 }
 
 static int get_status(t_cmd *cmd,t_env *shell)
@@ -65,13 +58,13 @@ static void run_command_list(t_env *shell)
     {
         if (cmd->has_pipe == 1)
         {
-            if (heredocs_with_pipes(cmd) == -1)
+            if (heredocs_with_pipes(cmd,&shell) == -1)
                 return;
             shell->last_exit_status = apply_pipe(&cmd,shell);
         }
         else
         {
-            if (heredocs_with_pipes(cmd) == -1)
+            if (heredocs_with_pipes(cmd,&shell) == -1)
                 return;
             status = get_status(cmd,shell);
             if (status != -2)
@@ -81,12 +74,30 @@ static void run_command_list(t_env *shell)
             cmd = cmd->next;
     }
 }
-
-int main(int argc, char **argv, char **envp)
+static void run_minishell(t_env *shell)
 {
     char    *line;
-    char    **tokens;
-    t_env   *expanded;
+    
+    init_signals();
+    while (1)
+    {
+        line = readline("minishell $ ");
+        if (!line)
+        {
+            printf("exit\n");
+            break;
+        } 
+        if (*line)
+            add_history(line); 
+        if (!apply_parse(line,shell))
+            continue;
+        run_command_list(shell);
+        memory_cleanup(line,shell);
+    }   
+}
+
+int main(int argc, char **argv, char **envp)
+{   
     t_env   *shell;
 
     shell = malloc(sizeof(t_env));
@@ -97,6 +108,7 @@ int main(int argc, char **argv, char **envp)
         free(shell);
         return (1);
     }
+<<<<<<< HEAD
     while (1)
     {
         line = readline("minishell $ ");
@@ -125,6 +137,9 @@ int main(int argc, char **argv, char **envp)
         run_command_list(shell);
         memory_cleanup(line,shell);
     }
+=======
+    run_minishell(shell);
+>>>>>>> 19fa583 (done)
     free_2d(shell->envp);
     free(shell);
     return (0);

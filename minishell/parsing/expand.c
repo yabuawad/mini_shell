@@ -80,13 +80,14 @@ t_env *addenv(void)
     return(newenv);
 }
 
-t_env *expand(t_cmd *cmdlist,char **env)
+t_env *expand(t_cmd *cmdlist,char **env, int last_exit_status)
 {
     t_env *myenv = addenv();
     if(!myenv)
         return NULL;
     myenv->cmd_head = cmdlist;
     myenv->envp = env;
+    myenv->last_exit_status = last_exit_status; // 
     t_cmd *curnt = cmdlist;
     while (curnt)
     {
