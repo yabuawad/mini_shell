@@ -103,7 +103,8 @@ int main(int argc, char **argv, char **envp)
         if (!line)
         {
             printf("exit\n");
-            break;
+            exit(1); 
+            // break;
         } 
         if (*line)
             add_history(line);   
