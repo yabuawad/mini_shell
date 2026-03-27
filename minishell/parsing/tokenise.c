@@ -1,184 +1,92 @@
 #include "../minishell.h"
 
-char **handle_pr(char **str)
+static void init(t_tok *mytok)
 {
-    int     i;
-    int x;
-    char    **tok = malloc(sizeof(char *) * 1024);
-    if (!tok)
-        return NULL;
-    
-    i = 0;
-    x = 0;
-    while (str[i])
-    {
-        int j = 0;
-        int start = 0;
-        int in_sqt = 0;
-        int in_dqt = 0;
-
-        while (str[i][j])
-        {
-            if (str[i][j] == '\'' && !in_dqt)
-                in_sqt = !in_sqt;
-            else if (str[i][j] == '"' && !in_sqt)
-                in_dqt = !in_dqt;
-
-            else if (!in_sqt && !in_dqt
-                && (str[i][j] == '|' || str[i][j] == '<' || str[i][j] == '>'))
-            {
-                if (j > start)
-                    tok[x++] = ft_substr(str[i], start, j - start);
-
-                if ((str[i][j] == '<' || str[i][j] == '>')
-                    && str[i][j + 1] == str[i][j])
-                {
-                    tok[x++] = ft_substr(str[i], j, 2);
-                    j += 2;
-                }
-                else
-                {
-                    tok[x++] = ft_substr(str[i], j, 1);
-                    j += 1;
-                }
-                start = j;
-                continue;
-            }
-            j++;
-        }
-        if (j > start)
-            tok[x++] = ft_substr(str[i], start, j - start);
-        i++;
-    }
-    tok[x] = NULL;
-    return (tok);
+    mytok->j = 0;
+    mytok->start = 0;
+    mytok->in_sqt = 0;
+    mytok->in_dqt = 0;
+}
+static void	handle_operator(char **str, t_tok *mytok)
+{
+	if (mytok->j > mytok->start)
+		mytok->tok[mytok->x++] = ft_substr(str[mytok->i], mytok->start, mytok->j - mytok->start);
+	if ((str[mytok->i][mytok->j] == '<' || str[mytok->i][mytok->j] == '>')
+		&& str[mytok->i][mytok->j + 1] == str[mytok->i][mytok->j])
+	{
+		mytok->tok[mytok->x++] = ft_substr(str[mytok->i], mytok->j, 2);
+		mytok->j += 2;
+	}
+	else
+	{
+		mytok->tok[mytok->x++] = ft_substr(str[mytok->i], mytok->j, 1);
+		mytok->j += 1;
+	}
+	mytok->start = mytok->j;
 }
 
+static void	handle_token(char **str, t_tok *mytok)
+{
+	init(mytok);
+	while (str[mytok->i][mytok->j])
+	{
+		if (str[mytok->i][mytok->j] == '\'' && !mytok->in_dqt)
+			mytok->in_sqt = !mytok->in_sqt;
+		else if (str[mytok->i][mytok->j] == '"' && !mytok->in_sqt)
+			mytok->in_dqt = !mytok->in_dqt;
+		else if (!mytok->in_sqt && !mytok->in_dqt
+			&& (str[mytok->i][mytok->j] == '|' || str[mytok->i][mytok->j] == '<' || str[mytok->i][mytok->j] == '>'))
+		{
+			handle_operator(str, mytok);
+			continue;
+		}
+		mytok->j++;
+	}
+	if (mytok->j > mytok->start)
+		mytok->tok[mytok->x++] = ft_substr(str[mytok->i], mytok->start, mytok->j - mytok->start);
+}
+
+char	**handle_pr(char **str)
+{
+	t_tok	mytok;
+
+	mytok.tok = malloc(sizeof(char *) * 1024);
+	if (!mytok.tok)
+		return (NULL);
+	mytok.i = 0;
+	mytok.x = 0;
+	while (str[mytok.i])
+	{
+		handle_token(str, &mytok);
+		mytok.i++;
+	}
+	mytok.tok[mytok.x] = NULL;
+	return (mytok.tok);
+}
 char **tokenise(char *line)
 {
     char  **seperated;
-    char **tokenised;   
-    if(check_quotes(line,'"') < 0 || check_quotes(line,'\'') < 0) //check on unclosed quotes
-    {
-        fprintf(stderr,"unclosed quotes!!!\n");
+    char **tokenised;
+
+    if(check_quotes(line,'"') < 0 || check_quotes(line,'\'') < 0)
         return NULL;
-    } 
-    if(check_quotes(line,'"') > 0)  //if quotes are double you pass the double
+    if(check_quotes(line,'"') > 0)
         seperated = sep(line,' ','"');
     else
-        seperated = sep(line,' ','\''); // any other case? we pass the single
+        seperated = sep(line,' ','\'');
     if(!seperated)
         return NULL;
     tokenised = handle_pr(seperated);
     freearr(seperated);
     if(!tokenised)
         return NULL;
-    if (handled_errors(tokenised,0,0,0,0))
-        ; // print_split(tokenised);
+    if (handled_errors(tokenised,0,0,0))
+            print_split(tokenised);
     else
     {
         printf("error\n");
         freearr(tokenised);
         return NULL;
     }
-    // print_split(tokenised);
     return(tokenised);
 }
-
-
-    // char pipe
-    // char **check_pipes(char **tokenised,int i,int x) // this function is for post seperation pipe check
-    // {       //for example the command echo "hello"|grep h works even tho there are no spaces so this function is to seperate pipes from cmds 
-    //     int j;
-    //     int found;
-    //     char **pipedtok;
-    //     int qtfound;
-    
-    //     pipedtok = malloc(sizeof(char *) * (count_tok(tokenised) + 1));
-    //     if (!pipedtok)
-    //         return NULL;
-    
-    //     while (tokenised[i])
-    //     {
-    //         qtfound = 0;
-    //         j = 0;
-    //         found = 0;
-    //         while (tokenised[i][j])
-    //         {
-    //             if(check_quotes(tokenised[i],'"') > 0 || check_quotes(tokenised[i],'\'') > 0)
-    //             {
-    //                 qtfound = 1;
-    //                 j++;
-    //             }
-    //             else if (tokenised[i][j] == '|' && ft_strlen(tokenised[i]) > 1)
-    //             {
-    //                 if (j > 0)
-    //                     pipedtok[x++] = ft_substr(tokenised[i], 0, j);
-    //                 pipedtok[x++] = ft_strdup("|");
-    //                 if (tokenised[i][j + 1])
-    //                     pipedtok[x++] = ft_strdup(tokenised[i] + j + 1);
-    //                 found = 1;
-    //                 break;
-    //             }
-    //             j++;
-    //         }
-    //         if(qtfound)
-    //             pipedtok[x++] = ft_strdup(removeqt(tokenised[i]));
-    //         else if(!found)
-    //             pipedtok[x++] = ft_strdup(tokenised[i]);
-    //         i++;
-    //     }
-    //     // if(pipedtok[x -1] == '"')
-    //         // x--;
-    //     pipedtok[x] = NULL;
-    //     return (pipedtok);
-    // }
-    
-    // char **check_pipes(char **tokenised, int i, int x)
-    // {
-    //     int j;
-    //     int found;
-    //     char **pipedtok;
-    //     int in_squote;
-    //     int in_dquote;
-    
-    //     pipedtok = malloc(sizeof(char *) * (count_tok(tokenised) + 1));
-    //     if (!pipedtok)
-    //         return NULL;
-    
-    //     while (tokenised[i])
-    //     {
-    //         j = 0;
-    //         found = 0;
-    //         in_squote = 0;
-    //         in_dquote = 0;
-    
-    //         while (tokenised[i][j])
-    //         {
-    //             if (tokenised[i][j] == '\'' && !in_dquote)
-    //                 in_squote = !in_squote;
-    //             else if (tokenised[i][j] == '"' && !in_squote)
-    //                 in_dquote = !in_dquote;
-    
-    //             else if (tokenised[i][j] == '|' && !in_squote && !in_dquote)
-    //             {
-    //                 if (j > 0)
-    //                     pipedtok[x++] = ft_substr(tokenised[i], 0, j);
-    //                 pipedtok[x++] = ft_strdup("|");
-    //                 if (tokenised[i][j + 1])
-    //                     pipedtok[x++] = ft_strdup(tokenised[i] + j + 1);
-    //                 found = 1;
-    //                 break;
-    //             }
-    //             j++;
-    //         }
-    
-    //         if (!found)
-    //             pipedtok[x++] = ft_strdup(tokenised[i]);
-    
-    //         i++;
-    //     }
-    
-    //     pipedtok[x] = NULL;
-    //     return (pipedtok);
-    // }

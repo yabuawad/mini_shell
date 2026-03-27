@@ -1,25 +1,22 @@
 #include "../minishell.h"        
-int check_word(char *tokens,int i)
+int check_word(char *tokens, int i)
 {
-    while(tokens[i] == ' ' && tokens[i])
+    while (tokens[i] && tokens[i] == ' ')
         i++;
-    if(!tokens[i])
-        return 1;
-    if(tokens[i] == '"' || tokens[i] == '\'')
-     {
-        char c = tokens[i];
-        i++;
-        while(tokens[i] != c)
-        {
-            if(!(tokens[i]))
-                return 0;
-            i++;
-        }
-        return 1;
-    }
-    else
+
+    if (!tokens[i])
         return 0;
-}                    
+    if (tokens[i] == '|')
+        return 0;
+    if (tokens[i] == '"' || tokens[i] == '\'')
+    {
+        char c = tokens[i++];
+        while (tokens[i] && tokens[i] != c)
+            i++;
+        return (tokens[i] == c);
+    }
+    return 1;
+}             
                         
 int check_red(char *tokens,int i)
 {
@@ -40,8 +37,9 @@ int print_err(char *err_msg)
     printf("%s\n",err_msg);
     return 0;
 }
-int handled_errors(char **tokens,int i,int j,int dqt,int sqt)
+int handled_errors(char **tokens,int i,int dqt,int sqt)
 {
+    int j;
     while(tokens[i])
     {
         j = 0;
@@ -53,10 +51,9 @@ int handled_errors(char **tokens,int i,int j,int dqt,int sqt)
                 sqt = !sqt;
             else if(!dqt && !sqt)
             {
-                if(tokens[i][j] == '|' && (i == 0 || !tokens[i + 1])) 
-                    return (print_err("pipe at end/beggining of cmd"));
-                // if(tokens[i][j] == '|' && !check_word(tokens[i + 1],0))
-                //     return (print_err("pipe not followed by a cmd"));
+                if((tokens[i][j] == '|' && (i == 0 || !tokens[i + 1]))
+                ||(tokens[i][j] == '|' && !check_word(tokens[i + 1],0))) 
+                    return (print_err("pipe error!"));
                 if((tokens[i][j] == '>' || tokens[i][j] == '<')&& !check_red(tokens[i + 1],0))  
                     return (print_err("redirection file invalid"));
                 if((tokens[i][j] == '>' || tokens[i][j] == '<') && i == 0)

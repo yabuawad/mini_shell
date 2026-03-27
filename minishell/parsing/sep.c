@@ -4,10 +4,8 @@ static int	countwd(char const *s, char c,char quote)
 {
 	int	counter;
 	int	isword;
-	// int	i;
     int qt;
 
-	// i = 0;
 	counter = 0;
 	isword = 0;
     qt = 0;
@@ -116,3 +114,4 @@ void print_split(char **arr)
     }
     printf("----\n");
 }
+

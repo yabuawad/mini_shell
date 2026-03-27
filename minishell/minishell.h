@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
+/*   By: yara <yara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 18:45:18 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/27 16:32:23 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/27 21:31:51 by yara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,12 +70,24 @@ typedef struct s_pipes
 typedef struct s_parse
 {
     int tmpsize;
+    int i;
     t_cmd	*head;
 	t_cmd	*current;
 	t_redir	*redir_head;
 	t_redir	*redtail;
 	t_redir	*cmdredir;
 } t_parse;
+
+typedef struct s_tok
+{
+	int	j;
+    int i;
+	int	start;
+	int	in_sqt;
+	int	in_dqt;
+	int	x;
+    char **tok;
+}	t_tok;
 
 extern int	global_signal;
 
@@ -134,8 +146,8 @@ void print_split(char **arr);
 int check_quotes(char *str,char c);
 char	**freearr(char **ptr);
 char **tokenise(char *line);
-char *removeqt(char *str);
-int handled_errors(char **tokens,int i,int j,int dqt,int sqt);
+char *removeqt(char *str,int j,size_t i);
+int handled_errors(char **tokens,int i,int dqt,int sqt);
 t_cmd *parse(char **tokens);
 t_cmd	*addnode(void);
 t_redir	*addredir(void);
@@ -145,11 +157,13 @@ void print_redirs(t_redir *redir);
 void fill_argv(t_cmd *cmd,char **tempargv,int tmpsize);
 t_cmd *end_cmd(t_parse **parse,char **argv_temp);
 void set_redtype(t_redir *cmdredir,char **tokens,int i);
-void fill_red(t_redir *cmdredir,t_redir **redtail,t_redir **redir_head,char **tokens,int i);
+void fill_red(t_parse **parse,char **tokens);
 void lastcmd(t_cmd *current,char **argv_temp,t_redir *redir_head,int tmpsize);
 t_env *expand(t_cmd *cmdlist,char **env, int last_exit_status);
 int is_varchar(char c);
 int get_length(char *str,int i);
 char *get_var(char *str,int i,char *var);
+void clean_qts(t_cmd *cmdlist,int i);
 char *find_env_val(t_env *myenv,char *var);
+t_env *addenv(void);
 #endif

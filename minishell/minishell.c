@@ -108,38 +108,7 @@ int main(int argc, char **argv, char **envp)
         free(shell);
         return (1);
     }
-<<<<<<< HEAD
-    while (1)
-    {
-        line = readline("minishell $ ");
-        if (!line)
-        {
-            printf("exit\n");
-            exit(1); 
-            // break;
-        } 
-        if (*line)
-            add_history(line);   
-        tokens = tokenise(line);
-        if (!tokens)
-        {
-            free(line);
-            continue;
-        }
-        shell->cmd_head = parse(tokens);
-        freearr(tokens);
-        if (shell->cmd_head)
-        {
-            expanded = expand(shell->cmd_head, shell->envp);
-            if (expanded)
-                free(expanded);
-        }
-        run_command_list(shell);
-        memory_cleanup(line,shell);
-    }
-=======
     run_minishell(shell);
->>>>>>> 19fa583 (done)
     free_2d(shell->envp);
     free(shell);
     return (0);

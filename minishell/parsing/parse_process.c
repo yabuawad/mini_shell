@@ -29,6 +29,7 @@ int    apply_parse(char *line, t_env *shell)
     {
         expanded = expand(shell->cmd_head, shell->envp,
                 shell->last_exit_status);
+    clean_qts(shell->cmd_head,0);   
         if (expanded)
             free(expanded);
     }

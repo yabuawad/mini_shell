@@ -3,28 +3,26 @@
 static void	parser_helper(char **tokens, t_parse **parse,
 					char *argv_temp[1024])
 {
-    int i;
-
-    i = 0;
-    while (tokens[i])
+    // parse->i = 0;
+    while (tokens[(*parse)->i])
     {
-        if (ft_strncmp(tokens[i], "|", 1) == 0)
+        if (ft_strncmp(tokens[(*parse)->i], "|", 1) == 0)
         {
             argv_temp[(*parse)->tmpsize] = NULL;
             (*parse)->current->has_pipe = 1;
             (*parse)->current = end_cmd(parse, argv_temp);
             (*parse)->tmpsize = 0;
             (*parse)->redir_head = NULL;
-            i++;
+            (*parse)->i++;
         }
-        else if (ft_strncmp(tokens[i], "<", 1) == 0 || ft_strncmp(tokens[i], ">", 1) == 0)
+        else if (ft_strncmp(tokens[(*parse)->i], "<", 1) == 0 || ft_strncmp(tokens[(*parse)->i], ">", 1) == 0)
         {
             (*parse)->cmdredir = addredir();
-            fill_red((*parse)->cmdredir, &(*parse)->redtail, &(*parse)->redir_head, tokens, i);
-            i += 2;
+            fill_red(parse, tokens);
+            (*parse)->i += 2;
         }
         else
-			argv_temp[((*parse)->tmpsize)++] = tokens[i++];
+			argv_temp[((*parse)->tmpsize)++] = tokens[(*parse)->i++];
     }
 }
 
@@ -38,6 +36,7 @@ t_cmd *parse(char **tokens)
     if (!parse)
         return (NULL);
     parse->tmpsize = 0;
+    parse->i = 0;
     parse->head = addnode();
     if (!parse->head) 
 	{
@@ -55,3 +54,4 @@ t_cmd *parse(char **tokens)
     free(parse);
     return (head);
 }
+
