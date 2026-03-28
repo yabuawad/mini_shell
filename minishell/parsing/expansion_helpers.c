@@ -8,13 +8,12 @@ int is_varchar(char c)
 int get_length(char *str,int i)
 {
     int counter = 0;
-    if (str[i + 1] == '?') // 
-        return (1);    //
+    if (str[i + 1] == '?')
+        return (1);
     if(i > 0 && str[i - 1] == '"')
     {
         i++;
-        // printf("whats before: %c\n",str[i - 1]);
-      while (str[i] != '\0' && is_varchar(str[i]))
+        while (str[i] != '\0' && is_varchar(str[i]))
         {
             counter++;
             i++;
@@ -36,11 +35,11 @@ char *get_var(char *str,int i,char *var)
     int j;
 
     j = 0;
-    if (str[i + 1] == '?') // 
-    {//
-        var[0] = '?';//
-        var[1] = '\0';//
-        return (var);//
+    if (str[i + 1] == '?')
+    {
+        var[0] = '?';
+        var[1] = '\0';
+        return (var);
     }
     if(i > 0 && str[i - 1] == '"')
     {
@@ -64,8 +63,8 @@ char *find_env_val(t_env *myenv,char *var)
     int j;
 
     val = NULL;
-    if (var && var[0] == '?' && var[1] == '\0') // 
-        return (ft_itoa(myenv->last_exit_status));//
+    if (var && var[0] == '?' && var[1] == '\0')
+        return (ft_itoa(myenv->last_exit_status));
     i = 0;
     while(myenv->envp[i])
     {

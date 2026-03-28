@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/12 16:20:08 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/19 23:09:25 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/28 01:50:33 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,15 @@ void    execve_handler(char *path,t_cmd *cmd, t_env *shell)
     perror("execve");
     free(path);
     exit(127);
+}
+
+void    path_handler(t_cmd *cmd,char *full_path)
+{
+    if (ft_strchr(cmd->argv[0], '/'))
+        exit(exec_error(cmd->argv[0]));
+    if (!full_path)
+        exit(exec_error(cmd->argv[0]));
+    exit(path_error(cmd)); 
 }
 int    setup_fds(int i,t_pipes *pipes)
 {
@@ -60,6 +69,8 @@ int    wait_for_all(t_pipes *pipes)
 
     i = 0;
     last_status = 0;
+    if (pipes->last_read != -1)
+        close(pipes->last_read);
     while(i < pipes->cmds_length)
     {
         waitpid(pipes->pids[i],&status,0);
@@ -67,5 +78,7 @@ int    wait_for_all(t_pipes *pipes)
             last_status = status;
         i++;
     }
+    pipes_cleanup(pipes,0);
+    init_signals();
     return (decode_wait_status(last_status));
 }

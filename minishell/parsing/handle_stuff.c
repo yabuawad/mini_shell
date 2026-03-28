@@ -1,6 +1,5 @@
 #include "../minishell.h"
 
-// 0 unquoted, 1 single, 2 double
 char    *removeqt(char *str,int j,size_t i)
 {
     if (!str)
@@ -32,12 +31,14 @@ char    *removeqt(char *str,int j,size_t i)
 
 void    clean_qts(t_cmd *cmdlist,int i)
 {
+    char    *tmp;
+
     while (cmdlist)
     {
         i = 0;
         while (cmdlist->argv[i])
         {
-            char *tmp = removeqt(cmdlist->argv[i],0,0);
+            tmp = removeqt(cmdlist->argv[i],0,0);
             free(cmdlist->argv[i]);
             cmdlist->argv[i] = tmp;
             i++;
@@ -47,7 +48,7 @@ void    clean_qts(t_cmd *cmdlist,int i)
         {
             if (r->type != R_HEREDOC)
             {
-                char *tmp = removeqt(r->target,0,0);
+                tmp = removeqt(r->target,0,0);
                 free(r->target);
                 r->target = tmp;
             }

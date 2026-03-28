@@ -34,7 +34,7 @@ int check_red(char *tokens,int i)
 
 int print_err(char *err_msg)
 {
-    printf("%s\n",err_msg);
+    ft_putendl_fd(err_msg, 2);
     return 0;
 }
 int handled_errors(char **tokens,int i,int dqt,int sqt)
@@ -53,11 +53,11 @@ int handled_errors(char **tokens,int i,int dqt,int sqt)
             {
                 if((tokens[i][j] == '|' && (i == 0 || !tokens[i + 1]))
                 ||(tokens[i][j] == '|' && !check_word(tokens[i + 1],0))) 
-                    return (print_err("pipe error!"));
+                    return (print_err("minishell : syntax error near unexpected token `|'"));
                 if((tokens[i][j] == '>' || tokens[i][j] == '<')&& !check_red(tokens[i + 1],0))  
-                    return (print_err("redirection file invalid"));
-                if((tokens[i][j] == '>' || tokens[i][j] == '<') && i == 0)
-                    return(print_err("redirection with no previous cmd/file"));
+                    return (print_err("minishell : syntax error near unexpected token `newline'"));
+                // if((tokens[i][j] == '>' || tokens[i][j] == '<') && i == 0)
+                //     return(print_err("redirection with no previous cmd/file"));
             }
             j++;
         }
@@ -65,40 +65,9 @@ int handled_errors(char **tokens,int i,int dqt,int sqt)
     }
     return 1;
 }
-
-
-/*
-errors to handle:
-1.pipes at begining or end of cmd 
-    // | ls 
-    // ls |
-2.Pipe after redirection
-    //ls > | wc
-    //ls < | wc
-3.Between two |, there must be at least one word
-    // ls || grep h
-4. redirections withput a target
-    // ls >
-    // ls <
-    // ls >>
-    // ls <<
-5.redirection followed by operater
-    // ls < >
-    //ls > | 
-    //ls > << ...etc
-6.multi redirections with no words
-    //ls >< file
-    //ls >>< file
-7.empty commands
-    //ls | | wc
-    //ls |    | wc
-8.redirection without a cmd
-    //> file
-    //< input
-9.operater chains
-    //ls >>> file
-    //ls <<< file
-10.<< must be followed by a word delimiter
-    // cat <<
-11.
-    */
+void    free_var(char *old,char *newstr,char *value)
+{
+    free(old);
+    free(newstr);
+    free(value);
+}

@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 23:07:14 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/27 14:33:57 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/28 00:22:17 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,4 +33,11 @@ void print_exit(char *message, int exit_value)
 {
     ft_putendl_fd(message, 2);
     exit(exit_value);
+}
+
+int    dup2_error(int fd)
+{
+    perror("minishell: dup2");
+    close(fd);
+    return (0);
 }

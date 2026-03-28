@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/27 13:59:23 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/27 17:14:16 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/28 02:58:40 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ int    apply_parse(char *line, t_env *shell)
     tokens = tokenise(line);
     if (!tokens)
     {
+        shell->last_exit_status = 2;
         free(line);
         return (0);
     }
@@ -35,5 +36,3 @@ int    apply_parse(char *line, t_env *shell)
     }
     return (1);
 }
-
-// new file 

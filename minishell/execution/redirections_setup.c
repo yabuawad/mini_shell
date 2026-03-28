@@ -82,7 +82,7 @@ static int    append_redirection(t_redir *redir)
         return (0);
     return (1);
 }
-int    apply_redirections(t_redir *redir)
+int    apply_redirections(t_redir *redir, t_env *env)
 {
     while (redir)
     {
@@ -103,7 +103,7 @@ int    apply_redirections(t_redir *redir)
         }
         else if (redir->type == R_HEREDOC)
         {
-            if (!heredoc_redirection(redir))
+            if (!heredoc_redirection(redir, env))
                 return (0);
         }
         redir = redir->next_redirection;

@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/20 16:15:59 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/19 22:37:14 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/28 00:19:06 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,12 +122,26 @@ static int  unset_validation(char *cmd)
     }
     return (0);
 }
+static void unset_env(t_env *shell,int index)
+{
+    int j;
 
+    j = 0;
+    if (index != -1)
+    {
+        free(shell->envp[index]);
+        j = index;
+        while (shell->envp[j])
+        {
+            shell->envp[j] = shell->envp[j + 1];
+            j++;
+        }
+    } 
+}
 int execute_unset(t_cmd *cmd, t_env *shell)
 {
     int i;
     int index;
-    int j;
     int had_error;
     
     i = 1;
@@ -143,17 +157,8 @@ int execute_unset(t_cmd *cmd, t_env *shell)
             i++;
             continue;
         }
-        index = envp_search(shell->envp, cmd->argv[i]);
-        if (index != -1)
-        {
-            free(shell->envp[index]);
-            j = index;
-            while (shell->envp[j])
-            {
-                shell->envp[j] = shell->envp[j + 1];
-                j++;
-            }
-        }
+        index = envp_search(shell->envp,cmd->argv[i]);
+        unset_env(shell,index);
         i++;
     }
     return (had_error);

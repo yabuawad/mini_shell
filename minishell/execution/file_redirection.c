@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 18:25:18 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/19 23:10:56 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/28 04:22:29 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static void    child_execution(t_cmd *cmd, t_env *shell)
     char    *path;
     char    *full_path;
     
-    if (!apply_redirections(cmd->redirs))
+    if (!apply_redirections(cmd->redirs, shell))
         exit(1);
     if (!cmd->argv || !cmd->argv[0])
         exit(0);
@@ -39,13 +39,7 @@ static void    child_execution(t_cmd *cmd, t_env *shell)
     full_path = find_full_path(shell->envp);
     path = find_command_path(full_path, cmd->argv[0]);
     if (!path)
-    {
-        if (ft_strchr(cmd->argv[0], '/'))
-            exit(exec_error(cmd->argv[0]));
-        if (!full_path)
-            exit(exec_error(cmd->argv[0]));
-        exit(path_error(cmd));
-    }
+        path_handler(cmd,full_path);
     execve_handler(path,cmd,shell);
 }
 static int builtin_with_redirection(t_cmd *cmd, t_env *shell)
@@ -58,7 +52,7 @@ static int builtin_with_redirection(t_cmd *cmd, t_env *shell)
     old_stdout = dup(1);
     if (old_stdin == -1 || old_stdout == -1)
         return (dup_failure(old_stdin, old_stdout));
-    if (!apply_redirections(cmd->redirs))
+    if (!apply_redirections(cmd->redirs, shell))
         status = 1;
     else
         status = execute_builtin(cmd, shell);

@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-static void	parser_helper(char **tokens, t_parse **parse,
+static int	parser_helper(char **tokens, t_parse **parse,
 					char *argv_temp[1024])
 {
     // parse->i = 0;
@@ -11,6 +11,8 @@ static void	parser_helper(char **tokens, t_parse **parse,
             argv_temp[(*parse)->tmpsize] = NULL;
             (*parse)->current->has_pipe = 1;
             (*parse)->current = end_cmd(parse, argv_temp);
+            if (!(*parse)->current)
+                return (0);
             (*parse)->tmpsize = 0;
             (*parse)->redir_head = NULL;
             (*parse)->i++;
@@ -18,12 +20,14 @@ static void	parser_helper(char **tokens, t_parse **parse,
         else if (ft_strncmp(tokens[(*parse)->i], "<", 1) == 0 || ft_strncmp(tokens[(*parse)->i], ">", 1) == 0)
         {
             (*parse)->cmdredir = addredir();
-            fill_red(parse, tokens);
+            if (!fill_red(parse, tokens))
+                return (0);
             (*parse)->i += 2;
         }
         else
 			argv_temp[((*parse)->tmpsize)++] = tokens[(*parse)->i++];
     }
+    return (1);
 }
 
 t_cmd *parse(char **tokens)
@@ -47,9 +51,20 @@ t_cmd *parse(char **tokens)
     parse->redir_head = NULL;
     parse->cmdredir = NULL;
     parse->redtail = NULL;
-    parser_helper(tokens, &parse, argv_temp);    
+    if (!parser_helper(tokens, &parse, argv_temp))
+    {
+        free_commands(parse->head);
+        free(parse);
+        return (NULL);
+    }
     argv_temp[parse->tmpsize] = NULL;
     lastcmd(parse->current, argv_temp, parse->redir_head, parse->tmpsize);
+    if (!parse->current->argv)
+    {
+        free_commands(parse->head);
+        free(parse);
+        return (NULL);
+    }
     head = parse->head;
     free(parse);
     return (head);

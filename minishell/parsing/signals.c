@@ -11,7 +11,6 @@ void handle_sigint(int sig)
 
 void init_signals(void)
 {
-    //signal(*signal sent(ex = ctrl+c)* , here is the function to behave once the signal is sent(could be a default built in one like(SIG_IGN)))
     signal(SIGINT, handle_sigint); //SIGINT means ctrl+c ,
     signal(SIGQUIT,  SIG_DFL); // SIGQUIT is for ctr+\ 
 }

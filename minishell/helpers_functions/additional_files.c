@@ -6,7 +6,7 @@
 /*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 23:09:03 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/27 14:33:37 by mohamed          ###   ########.fr       */
+/*   Updated: 2026/03/28 00:36:49 by mohamed          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,23 +32,19 @@ int print_export(t_env *env)
     while (env->envp[i])
     {
         has_value = ft_strchr(env->envp[i],'=');
+        ft_putstr("declare -x ");
         if (has_value)
         {
             len = has_value - env->envp[i];
-            ft_putstr("declare -x ");
             write(1,env->envp[i],len);
             write(1,"=\"",2);
             write(1,has_value + 1,ft_strlen(has_value + 1));
             write(1,"\"",1);
-            write(1,"\n",1);
         }
         else
-        {
-            ft_putstr("declare -x ");
             write(1, env->envp[i], ft_strlen(env->envp[i]));
-            write(1, "\n", 1);
-        }
-        i++;  
+        write(1, "\n", 1);
+        i++;
     }
     return (0);
 }
