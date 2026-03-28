@@ -13,6 +13,7 @@ SRCS		= minishell.c \
 			  execution/builtin_exit.c \
 			  execution/redirections_setup.c \
 			  execution/heredoc_processes.c \
+			  execution/heredoc_expand.c \
 			  execution/file_redirection.c \
 			  execution/envp_functions.c \
 			  helpers_functions/memory_utils.c \

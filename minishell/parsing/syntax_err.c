@@ -35,7 +35,7 @@ int check_red(char *tokens,int i)
 int print_err(char *err_msg)
 {
     ft_putendl_fd(err_msg, 2);
-    return 0;
+    return (2);
 }
 int handled_errors(char **tokens,int i,int dqt,int sqt)
 {

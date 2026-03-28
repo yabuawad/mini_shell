@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/14 18:45:18 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/28 02:40:12 by mohamed          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef MINISHELL_H
 #define MINISHELL_H
 #include <signal.h>
@@ -155,6 +143,7 @@ t_cmd *parse(char **tokens);
 t_cmd	*addnode(void);
 t_redir	*addredir(void);
 void print_argv(char **argv);
+int	heredoc_input(t_redir *redir, int fd[2], t_env *env);
 void print_cmdlist(t_cmd *cmd);
 void print_redirs(t_redir *redir);
 int fill_argv(t_cmd *cmd,char **tempargv,int tmpsize);

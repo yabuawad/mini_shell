@@ -74,7 +74,7 @@ int     check_quotes(char *str,char c)
 
     if(q % 2 != 0)
     {
-        perror("unclosed quotes!!!\n");
+        ft_putendl_fd("minishell: unclosed quotes", 2);
         return (-1);
     }
     else 

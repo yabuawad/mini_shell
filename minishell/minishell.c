@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mohamed <mohamed@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/14 18:45:04 by mohamed           #+#    #+#             */
-/*   Updated: 2026/03/27 17:21:03 by mohamed          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "minishell.h"
 
 static int  initialization(int argc, char **argv, char **envp ,t_env *shell)
@@ -90,7 +78,10 @@ static void run_minishell(t_env *shell)
         if (*line)
             add_history(line); 
         if (!apply_parse(line,shell))
+        {
+            free(line);
             continue;
+        }
         run_command_list(shell);
         memory_cleanup(line,shell);
     }   
@@ -99,6 +90,7 @@ static void run_minishell(t_env *shell)
 int main(int argc, char **argv, char **envp)
 {   
     t_env   *shell;
+    int     status;
 
     shell = malloc(sizeof(t_env));
     if (!shell)
@@ -109,7 +101,8 @@ int main(int argc, char **argv, char **envp)
         return (1);
     }
     run_minishell(shell);
+    status = shell->last_exit_status;
     free_2d(shell->envp);
     free(shell);
-    return (0);
+    return (status);
 }
