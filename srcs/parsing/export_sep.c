@@ -26,7 +26,7 @@ static t_exp	*init_myexp(void)
 	return (myexp);
 }
 
-char	**split_argv(char **argv, int pos, char **expanded)
+char	**split_argv(char **argv, int pos, char **expanded, char **result)
 {
 	t_exp	*myexp;
 
@@ -50,7 +50,9 @@ char	**split_argv(char **argv, int pos, char **expanded)
 	while (argv[myexp->j])
 		myexp->new_argv[myexp->i++] = argv[myexp->j++];
 	myexp->new_argv[myexp->i] = NULL;
-	return (myexp->new_argv);
+	result = myexp->new_argv;
+	free(myexp);
+	return (result);
 }
 
 int	is_pure_var(char *str)
@@ -77,7 +79,9 @@ void	check_tok(t_cmd *curnt, t_env *myenv, char ***split, int *i)
 	*split = sep(curnt->argv[*i], ' ', 0);
 	if (*split && count_tokens(*split) > 1)
 	{
-		new_argv = split_argv(curnt->argv, *i, *split);
+		new_argv = split_argv(curnt->argv, *i, *split, NULL);
+		if (!new_argv)
+			return ;
 		if (new_argv)
 		{
 			free(curnt->argv[*i]);

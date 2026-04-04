@@ -1,59 +1,34 @@
 #include "../minishell.h"
 
-static int	handler_helper(char ***str, t_tok **mytok, char **token)
+static int	is_operator(char c)
 {
-	if ((*mytok)->j > (*mytok)->start)
-	{
-		*token = ft_substr((*str)[(*mytok)->i], (*mytok)->start, (*mytok)->j
-				- (*mytok)->start);
-		if (!*token)
-			return (0);
-		(*mytok)->tok[(*mytok)->x++] = *token;
-	}
-	if (((*str)[(*mytok)->i][(*mytok)->j] == '<'
-			|| (*str)[(*mytok)->i][(*mytok)->j] == '>')
-		&& (*str)[(*mytok)->i][(*mytok)->j
-		+ 1] == (*str)[(*mytok)->i][(*mytok)->j])
-	{
-		*token = ft_substr((*str)[(*mytok)->i], (*mytok)->j, 2);
-		if (!*token)
-			return (0);
-		(*mytok)->tok[(*mytok)->x++] = *token;
-		(*mytok)->j += 2;
-	}
-	return (1);
+	return (c == '|' || c == '<' || c == '>');
 }
 
-static int	handle_operator(char **str, t_tok *mytok)
+static int	handle_last_token(char **str, t_tok *mytok)
 {
 	char	*token;
 
-	if (!handler_helper(&str, &mytok, &token))
+	if (mytok->j <= mytok->start)
+		return (1);
+	token = ft_substr(str[mytok->i], mytok->start, mytok->j - mytok->start);
+	if (!token)
 		return (0);
-	else
-	{
-		token = ft_substr(str[mytok->i], mytok->j, 1);
-		if (!token)
-			return (0);
-		mytok->tok[mytok->x++] = token;
-		mytok->j += 1;
-	}
-	mytok->start = mytok->j;
+	mytok->tok[mytok->x++] = token;
 	return (1);
 }
 
-static int	handle_token(char **str, t_tok *mytok, char *token)
+static int	handle_token(char **str, t_tok *mytok)
 {
-	init(mytok);
+	char	c;
+
+	tok_init(mytok);
 	while (str[mytok->i][mytok->j])
 	{
-		if (str[mytok->i][mytok->j] == '\'' && !mytok->in_dqt)
-			mytok->in_sqt = !mytok->in_sqt;
-		else if (str[mytok->i][mytok->j] == '"' && !mytok->in_sqt)
-			mytok->in_dqt = !mytok->in_dqt;
-		else if (!mytok->in_sqt && !mytok->in_dqt
-			&& (str[mytok->i][mytok->j] == '|' || str[mytok->i][mytok->j] == '<'
-				|| str[mytok->i][mytok->j] == '>'))
+		c = str[mytok->i][mytok->j];
+		if (c == '\'' || c == '"')
+			handle_quotes(c, mytok);
+		else if (!mytok->in_sqt && !mytok->in_dqt && is_operator(c))
 		{
 			if (!handle_operator(str, mytok))
 				return (0);
@@ -61,14 +36,7 @@ static int	handle_token(char **str, t_tok *mytok, char *token)
 		}
 		mytok->j++;
 	}
-	if (mytok->j > mytok->start)
-	{
-		token = ft_substr(str[mytok->i], mytok->start, mytok->j - mytok->start);
-		if (!token)
-			return (0);
-		mytok->tok[mytok->x++] = token;
-	}
-	return (1);
+	return (handle_last_token(str, mytok));
 }
 
 char	**handle_pr(char **str)
@@ -82,7 +50,7 @@ char	**handle_pr(char **str)
 	mytok.x = 0;
 	while (str[mytok.i])
 	{
-		if (!handle_token(str, &mytok, NULL))
+		if (!handle_token(str, &mytok))
 		{
 			mytok.tok[mytok.x] = NULL;
 			freearr(mytok.tok);
@@ -96,21 +64,21 @@ char	**handle_pr(char **str)
 
 char	**tokenise(char *line)
 {
-	char	**seperated;
+	char	**separated;
 	char	**tokenised;
 	int		has_dqt;
 
 	has_dqt = check_quotes(line, '"');
-	if (has_dqt < 0 || (check_quotes(line, '\'') < 0))
+	if (has_dqt < 0 || check_quotes(line, '\'') < 0)
 		return (NULL);
 	if (has_dqt > 0)
-		seperated = sep(line, ' ', '"');
+		separated = sep(line, ' ', '"');
 	else
-		seperated = sep(line, ' ', '\'');
-	if (!seperated)
+		separated = sep(line, ' ', '\'');
+	if (!separated)
 		return (NULL);
-	tokenised = handle_pr(seperated);
-	freearr(seperated);
+	tokenised = handle_pr(separated);
+	freearr(separated);
 	if (!tokenised)
 		return (NULL);
 	if (!handled_errors(tokenised, 0, 0, 0))

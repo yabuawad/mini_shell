@@ -28,6 +28,7 @@ SRCS		= minishell.c \
 			  parsing/syntax_err.c \
 			  parsing/tokenise.c \
 			  parsing/handle_stuff.c \
+			  parsing/tok_handler.c \
 			  parsing/linkedlist.c \
 			  parsing/handleparse.c \
 			  parsing/export_sep.c \

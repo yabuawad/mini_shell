@@ -169,12 +169,15 @@ void clean_qts(t_cmd *cmdlist,int i,t_redir *r);
 char *find_env_val(t_env *myenv,char *var);
 t_env *addenv(void);
 int  count_tokens(char **arr);
-char **split_argv(char **argv, int pos, char **expanded);
+char **split_argv(char **argv, int pos, char **expanded,char **result);
 int  is_pure_var(char *str);
 void check_tok(t_cmd *curnt, t_env *myenv, char ***split, int *i);
 void expand_this(char **str, t_env *myenv, int i,int state);
 void	free_partial_argv(char **argv, int size);
 void	init(t_tok *mytok);
-
-
+void	tok_init(t_tok *mytok);
+int	flush_pending(char **str, t_tok *mytok);
+int	extract_operator(char **str, t_tok *mytok);
+int	handle_operator(char **str, t_tok *mytok);
+void	handle_quotes(char c, t_tok *mytok);
 #endif
