@@ -99,6 +99,73 @@ result:
 [ 0 ]
 ```
 this phase ensures that all tokens are fully resolved and ready to be passed to the execution stage.
+
+### Execution
+
+The execution phase reads through all the commands we parsed and runs them. it checks for heredocs first, then decides how to run each command based on whether it has pipes and redirections.
+
+The basic steps are:
+
+1. Check for heredocs: look for '<<' operators and prepare them before running anything
+2. check for pipes: see if the command has '|' characters
+3. run the command! : execute based on what we found above
+
+#### Case 1: Commands with Pipes
+
+When you use the pipe character ('|'), we run multiple commands at once and connect them together:
+
+- go through each command in the list
+- connect them with pipes using the pipe() function
+-  create a new child process for each command
+- each child reads from the previous command and writes to the next one
+- wait for all children to finish
+
+**Example**:
+```bash
+minishell$: cat file.txt | grep mh | sort
+```
+#### Case 2: Commands without Pipes
+
+When there are no pipes, commands are executed individually. the execution further branches based on whether redirections are present.
+if there are no pipes, we run the command on its own. but we need to check if there are redirections like `<`, `>`, `<<`, or `>>`.
+
+##### Case 2a: No Pipes, But Has Redirections
+
+When a command has redirections (`<`, `>`, `<<`, `>>`):
+
+- **built-in Commands** (like `echo`, `cd`, `export`):
+  1. save the current file descriptors (stdin, stdout)
+  2. change where it reads/writes based on the redirections
+  3. run the command with the new read/write locations
+  4. restore the original file descriptors so the shell continues normally
+
+- **Regular Programs** (like `ls`, `cat`, etc.):
+  1. fork a child process
+  2. set up the redirections in the child process
+  3. execute the command in the child process
+  4. parent shell waits for completion
+
+**Example**:
+```bash
+minishell$: echo "mohamed" > output.txt
+minishell$: cat < input.txt
+```
+
+##### Case 2b: No Pipes, No Redirections
+
+When a command has no pipes and no redirections, we check what kind of command it is:
+
+- **Built-in Commands**: Run directly in the shell (no new process needed)
+  
+- **Regular Programs**: Create a child process and run it there
+
+**Example**:
+```bash
+minishell$: echo "mohamed"
+minishell$: ls -la
+minishell$: pwd
+```
+
 ## Instructions
 ### Compilation
 ```bash
@@ -111,21 +178,6 @@ make clean
 make fclean
 make re
 ```
-
-### Execution
-```bash
-./minishell
-```
-
-You can then type commands interactively, for example:
-```bash
-echo hello
-ls -l | cat
-cat << EOF
-text
-EOF
-```
-
 ## Resources
 ### References
 - Main Source : Bash
