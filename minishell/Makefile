@@ -24,6 +24,7 @@ SRCS		= minishell.c \
 			  execution/pipes_execution.c \
 			  execution/builtin_helpers.c \
 			  parsing/sep.c \
+			  parsing/export_sep.c \
 			  parsing/syntax_err.c \
 			  parsing/tokenise.c \
 			  parsing/handle_stuff.c \

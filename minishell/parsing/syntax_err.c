@@ -1,73 +1,77 @@
-#include "../minishell.h"        
-int check_word(char *tokens, int i)
-{
-    while (tokens[i] && tokens[i] == ' ')
-        i++;
+#include "../minishell.h"
 
-    if (!tokens[i])
-        return 0;
-    if (tokens[i] == '|')
-        return 0;
-    if (tokens[i] == '"' || tokens[i] == '\'')
-    {
-        char c = tokens[i++];
-        while (tokens[i] && tokens[i] != c)
-            i++;
-        return (tokens[i] == c);
-    }
-    return 1;
-}             
-                        
-int check_red(char *tokens,int i)
+int	check_word(char *tokens, int i)
 {
-    if(!tokens)
-        return 0;
-    while(tokens[i] == ' ')
-        i++;
-    if(!tokens[i])
-        return 0;
-    if(tokens[i] == '>' || tokens[i] == '<' || tokens[i] == '|')
-        return 0;
-    else 
-        return 1;
+	char	c;
+
+	while (tokens[i] && tokens[i] == ' ')
+		i++;
+	if (!tokens[i])
+		return (0);
+	if (tokens[i] == '|')
+		return (0);
+	if (tokens[i] == '"' || tokens[i] == '\'')
+	{
+		c = tokens[i++];
+		while (tokens[i] && tokens[i] != c)
+			i++;
+		return (tokens[i] == c);
+	}
+	return (1);
 }
 
-int print_err(char *err_msg)
+int	check_red(char *tokens, int i)
 {
-    ft_putendl_fd(err_msg, 2);
-    return (2);
+	if (!tokens)
+		return (0);
+	while (tokens[i] == ' ')
+		i++;
+	if (!tokens[i])
+		return (0);
+	if (tokens[i] == '>' || tokens[i] == '<' || tokens[i] == '|')
+		return (0);
+	else
+		return (1);
 }
-int handled_errors(char **tokens,int i,int dqt,int sqt)
+
+int	print_err(char *err_msg)
 {
-    int j;
-    while(tokens[i])
-    {
-        j = 0;
-        while(tokens[i][j])
-        {
-            if(tokens[i][j] == '"')
-                dqt = !dqt;
-            else if(tokens[i][j] == '\'')
-                sqt = !sqt;
-            else if(!dqt && !sqt)
-            {
-                if((tokens[i][j] == '|' && (i == 0 || !tokens[i + 1]))
-                ||(tokens[i][j] == '|' && !check_word(tokens[i + 1],0))) 
-                    return (print_err("minishell : syntax error near unexpected token `|'"));
-                if((tokens[i][j] == '>' || tokens[i][j] == '<')&& !check_red(tokens[i + 1],0))  
-                    return (print_err("minishell : syntax error near unexpected token `newline'"));
-                // if((tokens[i][j] == '>' || tokens[i][j] == '<') && i == 0)
-                //     return(print_err("redirection with no previous cmd/file"));
-            }
-            j++;
-        }
-    i++;
-    }
-    return 1;
+	ft_putendl_fd(err_msg, 2);
+	return (2);
 }
-void    free_var(char *old,char *newstr,char *value)
+
+int	handled_errors(char **tokens, int i, int dqt, int sqt)
 {
-    free(old);
-    free(newstr);
-    free(value);
+	int	j;
+
+	while (tokens[i])
+	{
+		j = 0;
+		while (tokens[i][j])
+		{
+			if (tokens[i][j] == '"')
+				dqt = !dqt;
+			else if (tokens[i][j] == '\'')
+				sqt = !sqt;
+			else if (!dqt && !sqt)
+			{
+				if ((tokens[i][j] == '|' && (i == 0 || !tokens[i + 1]))
+					|| (tokens[i][j] == '|' && !check_word(tokens[i + 1], 0)))
+					return (print_err("syntax error near unexpected token |"));
+				if ((tokens[i][j] == '>' || tokens[i][j] == '<')
+					&& !check_red(tokens[i + 1], 0))
+					return (print_err("syntax error near unexpected token"));
+			}
+			j++;
+		}
+		i++;
+	}
+	return (1);
+}
+
+void	free_var(char *old, char *newstr, char *value)
+{
+	free(old);
+	free(newstr);
+	free(value);
 }

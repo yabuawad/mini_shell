@@ -77,6 +77,16 @@ typedef struct s_tok
     char **tok;
 }	t_tok;
 
+typedef struct s_exp
+{
+     int     old_len;
+    int     exp_len;
+    int     new_len;
+    char    **new_argv;
+    int     i;
+    int     j;
+}t_exp;
+
 extern int	global_signal;
 
 int exec_error(char *cmd);
@@ -144,8 +154,8 @@ t_cmd	*addnode(void);
 t_redir	*addredir(void);
 void print_argv(char **argv);
 int	heredoc_input(t_redir *redir, int fd[2], t_env *env);
-void print_cmdlist(t_cmd *cmd);
-void print_redirs(t_redir *redir);
+// void print_cmdlist(t_cmd *cmd);
+// void print_redirs(t_redir *redir);
 int fill_argv(t_cmd *cmd,char **tempargv,int tmpsize);
 t_cmd *end_cmd(t_parse **parse,char **argv_temp);
 void set_redtype(t_redir *cmdredir,char **tokens,int i);
@@ -155,8 +165,14 @@ t_env *expand(t_cmd *cmdlist,char **env, int last_exit_status);
 int is_varchar(char c);
 int get_length(char *str,int i);
 char *get_var(char *str,int i,char *var);
-void clean_qts(t_cmd *cmdlist,int i);
+void clean_qts(t_cmd *cmdlist,int i,t_redir *r);
 char *find_env_val(t_env *myenv,char *var);
 t_env *addenv(void);
-void expand_this(char **str, t_env *myenv, int i);
+int  count_tokens(char **arr);
+char **split_argv(char **argv, int pos, char **expanded);
+int  is_pure_var(char *str);
+void check_tok(t_cmd *curnt, t_env *myenv, char ***split, int *i);
+void expand_this(char **str, t_env *myenv, int i,int state);
+void	free_partial_argv(char **argv, int size);
+void	init(t_tok *mytok);
 #endif

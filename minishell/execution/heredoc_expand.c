@@ -49,7 +49,7 @@ static char	*expand_heredoc(char *str, t_env *env, int skip_expand)
             expanded[i] = '\a';
         i++;
     }
-    expand_this(&expanded, env, 0);
+    expand_this(&expanded, env, 0,0);
     i = 0;
     while (expanded[i])
     {
