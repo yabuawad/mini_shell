@@ -69,6 +69,41 @@ static int	export_validation(char *cmd)
 	}
 	return (0);
 }
+// static void	print_sorted_export(t_env *env)
+// {
+// 	int	i;
+// 	int	j;
+
+// 	i = 0;
+
+// }
+int	print_export(t_env *env)
+{
+	int		i;
+	char	*has_value;
+	int		len;
+
+	len = 0;
+	i = 0;
+	while (env->envp[i])
+	{
+		has_value = ft_strchr(env->envp[i], '=');
+		ft_putstr("declare -x ");
+		if (has_value)
+		{
+			len = has_value - env->envp[i];
+			write(1, env->envp[i], len);
+			write(1, "=\"", 2);
+			write(1, has_value + 1, ft_strlen(has_value + 1));
+			write(1, "\"", 1);
+		}
+		else
+			write(1, env->envp[i], ft_strlen(env->envp[i]));
+		write(1, "\n", 1);
+		i++;
+	}
+	return (0);
+}
 
 int	execute_export(t_cmd *cmd, t_env *shell)
 {

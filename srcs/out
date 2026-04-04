@@ -1,5 +1,0 @@
-drwxrwxr-x 2 yara yara  4096 Apr  4 18:33 helpers_functions
--rwxrwxr-x 1 yara yara 67600 Apr  4 18:52 minishell
--rw-rw-r-- 1 yara yara  2249 Apr  4 18:33 minishell.c
--rw-rw-r-- 1 yara yara  5009 Apr  4 18:52 minishell.h
--rw-rw-r-- 1 yara yara  3720 Apr  4 18:33 minishell.o

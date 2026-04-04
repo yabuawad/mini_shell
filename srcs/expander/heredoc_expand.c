@@ -33,7 +33,7 @@ static char	*expand_heredoc(char *str, t_env *env, int skip_expand)
 			expanded[i] = '\a';
 		i++;
 	}
-	expand_this(&expanded, env, 0,0);
+	expand_this(&expanded, env, 0, 0);
 	i = 0;
 	while (expanded[i])
 	{
@@ -67,7 +67,7 @@ int	heredoc_input(t_redir *redir, int fd[2], t_env *env)
 	int		match;
 
 	str = readline("> ");
-	if (g_sig_status == 130)
+	if (g_global_status == 130)
 		return (heredoc_terminate(str, -1));
 	if (!str)
 		return (0);

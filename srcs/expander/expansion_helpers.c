@@ -34,6 +34,23 @@ int	get_length(char *str, int i)
 	return (counter);
 }
 
+int	dollar_sign_handler(t_env *myenv, char **str, int i)
+{
+	char	*var;
+	int		len;
+
+	len = get_length(*str, i);
+	if (len == 0 && (*str)[i + 1] != '?')
+		return (1);
+	var = malloc(len + 1);
+	if (!var)
+		return (0);
+	var = get_var(*str, i, var);
+	replace_var(myenv, var, str, i);
+	free(var);
+	return (0);
+}
+
 char	*get_var(char *str, int i, char *var)
 {
 	int	j;

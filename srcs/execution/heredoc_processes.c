@@ -7,7 +7,7 @@ int	heredoc_fds(t_redir *redir, t_env *env)
 
 	if (pipe(fd) == -1)
 		return (-1);
-	g_sig_status = 0;
+	g_global_status = 0;
 	while (1)
 	{
 		ret = heredoc_input(redir, fd, env);

@@ -1,15 +1,15 @@
 #include "../minishell.h"
 
-volatile sig_atomic_t	g_sig_status = 0;
+volatile sig_atomic_t	g_global_status = 0;
 
 void	sigint_handler(int sig)
 {
-	(void)sig;
-	write(1, "\n", 1);
+	write(1, "\n", 1);	
 	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();
-	g_sig_status = 130;
+	g_global_status = 130;
+	(void)sig;
 }
 
 void	init_signals(void)

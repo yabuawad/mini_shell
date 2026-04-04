@@ -14,7 +14,7 @@ SRCS		= minishell.c \
 			  execution/builtin_exit.c \
 			  execution/redirections_setup.c \
 			  execution/heredoc_processes.c \
-			  execution/heredoc_expand.c \
+			  expander/heredoc_expand.c \
 			  execution/file_redirection.c \
 			  execution/envp_functions.c \
 			  helpers_functions/memory_utils.c \
@@ -28,13 +28,12 @@ SRCS		= minishell.c \
 			  parsing/syntax_err.c \
 			  parsing/tokenise.c \
 			  parsing/handle_stuff.c \
-			  parsing/tok_handler.c \
 			  parsing/linkedlist.c \
 			  parsing/handleparse.c \
 			  parsing/export_sep.c \
 			  parsing/parse.c \
-			  parsing/expansion_helpers.c \
-			  parsing/expand.c \
+			  expander/expansion_helpers.c \
+			  expander/expand.c \
 			  parsing/parse_process.c \
 			  signals/signals.c \
 			  ../libft/ft_atoi.c \

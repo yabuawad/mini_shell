@@ -49,8 +49,9 @@ void	replace_var(t_env *myenv, char *var, char **str, size_t var_index)
 
 void	expand_this(char **str, t_env *myenv, int i, int state)
 {
-	char	*var;
+	int	result;
 
+	result = 0;
 	while ((*str)[i])
 	{
 		if ((*str)[i] == '\'' && state == 0)
@@ -63,13 +64,11 @@ void	expand_this(char **str, t_env *myenv, int i, int state)
 			state = 0;
 		else if ((*str)[i] == '$' && state != 1)
 		{
-			var = malloc(get_length(*str, i) + 1);
-			if (!var)
+			result = dollar_sign_handler(myenv, str, i);
+			if (result == -1)
 				return ;
-			var = get_var(*str, i, var);
-			replace_var(myenv, var, str, i);
-			free(var);
-			continue ;
+			else if (!result)
+				continue ;
 		}
 		i++;
 	}

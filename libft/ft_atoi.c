@@ -14,7 +14,7 @@
 
 int	ft_atoi(const char *nptr)
 {
-	int	sign;
+	int		sign;
 	long	result;
 
 	sign = 1;
@@ -40,5 +40,5 @@ int	ft_atoi(const char *nptr)
 // 	char 	*ptr;
 
 // 	ptr = "--324432";
-// 	printf("%d",ft_atoi(ptr));	
+// 	printf("%d",ft_atoi(ptr));
 // }
