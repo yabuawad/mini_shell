@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipes_execution.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yabuawad <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/05 11:42:50 by yabuawad          #+#    #+#             */
+/*   Updated: 2026/04/05 11:44:01 by yabuawad         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 static void	execute_final_process(t_cmd *cmd, t_env *shell)
@@ -123,7 +135,7 @@ int	apply_pipe(t_cmd **cmd, t_env *shell)
 			return (pipes_cleanup(&pipes, i));
 		if (pipes.pids[i] == 0)
 			piped_command(&pipes, i, (*cmd), shell);
-		close(pipes.fd[1]); // parent closes write end
+		close(pipes.fd[1]);
 		if (pipes.last_read != -1)
 			close(pipes.last_read);
 		pipes.last_read = pipes.fd[0];

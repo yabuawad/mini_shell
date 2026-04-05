@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   status_utils.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yabuawad <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/05 11:35:36 by yabuawad          #+#    #+#             */
+/*   Updated: 2026/04/05 11:35:40 by yabuawad         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 void	execve_handler(char *path, t_cmd *cmd, t_env *shell)
@@ -45,12 +57,11 @@ int	setup_fds(int i, t_pipes *pipes)
 
 int	decode_wait_status(int status)
 {
-	// converts the raw waitpid() status int shell-style code,
-	if (WIFEXITED(status)) // child ended normally
+	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
-	if (WIFSIGNALED(status)) // child was killed by a signal
+	if (WIFSIGNALED(status))
 		return (128 + WTERMSIG(status));
-	return (1); // safe generic failure
+	return (1);
 }
 
 int	wait_for_all(t_pipes *pipes)

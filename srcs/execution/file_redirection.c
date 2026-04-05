@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   file_redirection.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yabuawad <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/05 11:42:16 by yabuawad          #+#    #+#             */
+/*   Updated: 2026/04/05 11:43:30 by yabuawad         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 static int	dup_failure(int old_stdin, int old_stdout)
@@ -73,5 +85,5 @@ int	execute_with_redirections(t_cmd *cmd, t_env *shell)
 	if (pid == 0)
 		child_execution(cmd, shell);
 	waitpid(pid, &status, 0);
-	return (decode_wait_status(status)); // ?
+	return (decode_wait_status(status));
 }

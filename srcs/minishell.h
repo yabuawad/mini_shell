@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yabuawad <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/05 11:39:14 by yabuawad          #+#    #+#             */
+/*   Updated: 2026/04/05 11:39:16 by yabuawad         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H
 # define MINISHELL_H
 # include "../libft/libft.h"
@@ -20,7 +32,7 @@ typedef enum e_redir_type
 	R_OUT,
 	R_HEREDOC,
 	R_APPEND
-}								redir_type;
+}	t_redir_type;
 
 typedef struct s_redir
 {
