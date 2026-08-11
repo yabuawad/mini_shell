@@ -7,6 +7,7 @@ The goal of the project is to reproduce the core behavior of a basic shell while
 
 ## Parsing
 
+
 parsing shell input is handled through three core phases: *tokenisation*, *parsing* and *expansion*.
 each phase transforms the input into a more structured and usable form, making it easier to eventually execute the command.  
 here are some details about each phase: 
